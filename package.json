@@ -1,0 +1,21 @@
+{
+  "name": "kokorobot",
+  "version": "0.0.0",
+  "private": true,
+  "author": "mohemohe <mohemohe@ghippos.net>",
+  "description": "",
+  "dependencies": {
+    "@fand/irasutoya": "mohemohe/irasutoya#develop",
+    "axios": "^0.18.0",
+    "google-images": "^2.1.0",
+    "hubot": "^2.19.0",
+    "hubot-kokoro.io": "^1.1.1",
+    "hubot-mongodb-brain": "mohemohe/hubot-mongodb-brain",
+    "hubot-scripts": "^2.17.2",
+    "mersenne-twister": "^1.1.0",
+    "node-bing-api": "^4.0.0"
+  },
+  "scripts": {
+    "up": "yarn && docker-compose build && docker-compose up"
+  }
+}

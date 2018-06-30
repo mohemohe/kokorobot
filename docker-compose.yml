@@ -1,0 +1,35 @@
+---
+version: "3.2"
+services:
+  hubot:
+    build: .
+    env_file: .env
+    networks:
+      - default
+    ports:
+      - 8080:8080
+    volumes:
+      - type: mount
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+    depends_on:
+      - mongodb
+    restart: on-failure
+  mongodb:
+    container_name: hubot-mongodb
+    image: mongo:3.4
+    networks:
+      - default
+    volumes:
+      - type: volume
+        source: mongo-db
+        target: /data/db
+      - type: volume
+        source: mongo-configdb
+        target: /data/configdb
+    restart: on-failure
+volumes:
+  mongo-db:
+  mongo-configdb:
+networks:
+  default:
