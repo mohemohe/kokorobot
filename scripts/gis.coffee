@@ -1,5 +1,6 @@
 GoogleImages = require 'google-images'
 allowCommand = require '../helpers/allowcommand'
+random = require '../helpers/random'
 
 checkGoogle = (msg) ->
   if process.env.GOOGLE_CSE_ID && process.env.GOOGLE_API_KEY
@@ -18,7 +19,7 @@ module.exports = (robot) ->
       searchText = msg.match[1]
       googleImage.search(searchText).then (images) ->
         console.log images
-        target = getRandomInt 0, images.length
+        target = random 0, images.length
         console.log 'search target: ', target, images[target]
         return msg.send images[target].url
       .catch (error) ->

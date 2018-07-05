@@ -1,6 +1,7 @@
 util = require 'util'
 Bing = require 'node-bing-api'
 allowCommand = require '../helpers/allowcommand'
+random = require '../helpers/random'
 
 checkBing = (msg) ->
   if process.env.BING_API_KEY
@@ -28,7 +29,7 @@ module.exports = (robot) ->
           console.log errorObj
           return msg.send 'APIエラーが発生しました'
         if body && body.value && body.value.length > 0
-          target = getRandomInt 0, body.value.length
+          target = random 0, body.value.length
           console.log 'search target: ', target, body.value[target]
           msg.send body.value[target].contentUrl
         else
