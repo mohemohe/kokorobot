@@ -68,15 +68,16 @@ module.exports = ((robot) => {
       const lastDamage = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.user}_last`);
 
       let nextHp = currentHp;
-      if (lastDamage && new Date(lastDamage).getDate() !== new Date().getDate()) {
-        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.user}_last`, new Date().getTime());
-        const days = Math.abs(did(new Date(lastDamage).getDate() - new Date().getDate()));
-        nextHp += heal * days;
-        if (nextHp > maxHp) {
-          nextHp = maxHp;
+      if (lastDamage) {
+        const days = Math.abs(did(new Date(lastDamage), new Date()));
+        if (days > 0) {
+          robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.user}_last`, new Date().getTime());
+          nextHp += heal * days;
+          if (nextHp > maxHp) {
+            nextHp = maxHp;
+          }
+          msg.reply(`最後に攻撃を受けてから ${days} 日経過しました。HP回復処理を行います。 ${currentHp} → ${nextHp}/${maxHp}`);
         }
-
-        msg.reply(`最後に攻撃を受けてから ${days} 日経過しました。HP回復処理を行います。 ${currentHp} → ${nextHp}/${maxHp}`);
       }
 
       const damage = random(1, maxDamage);
