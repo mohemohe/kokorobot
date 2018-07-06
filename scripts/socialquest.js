@@ -1,3 +1,4 @@
+const did = require('date-fns/difference_in_days');
 const random = require('../helpers/random');
 
 const maxHp = 100;
@@ -69,7 +70,7 @@ module.exports = ((robot) => {
       let nextHp = currentHp;
       if (lastDamage && new Date(lastDamage).getDate() !== new Date().getDate()) {
         robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.user}_last`, new Date().getTime());
-        const days = Math.abs(Math.ceil((new Date(lastDamage).getDate() - new Date().getDate()) / 86400000));
+        const days = Math.abs(did(new Date(lastDamage).getDate() - new Date().getDate()));
         nextHp += heal * days;
         if (nextHp > maxHp) {
           nextHp = maxHp;

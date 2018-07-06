@@ -7,6 +7,7 @@
   "dependencies": {
     "@fand/irasutoya": "mohemohe/irasutoya#develop",
     "axios": "^0.18.0",
+    "date-fns": "^1.29.0",
     "google-images": "^2.1.0",
     "hubot": "^2.19.0",
     "hubot-kokoro.io": "^1.1.1",
