@@ -1,11 +1,12 @@
-allowCommand = require '../helpers/allowcommand'
+const allowCommand = require('../helpers/allowcommand');
 
-module.exports = (robot) ->
-  robot.hear /^\/help$/mi, (msg) ->
-    if !allowCommand robot, msg
-      return
+module.exports = (robot) => {
+  robot.hear(/^\/help$/mi, (msg) => {
+    if (!allowCommand(robot, msg)) {
+      return;
+    }
 
-    msg.send """```
+    msg.send(`\`\`\`
 /command [enable|disable] コマンド有効・無効切り替え
 /bis                      Bing画像検索 (3000req/month)
 /gis                      Google画像検索 (100req/day)
@@ -22,4 +23,6 @@ module.exports = (robot) ->
 /help                     このメッセージ
 /ping                     pong
 /kill                     😇
-```"""
+\`\`\``);
+  });
+};

@@ -8,9 +8,10 @@
     "@fand/irasutoya": "mohemohe/irasutoya#develop",
     "axios": "^0.18.0",
     "date-fns": "^1.29.0",
+    "eslint-config-airbnb-base": "^13.0.0",
     "google-images": "^2.1.0",
     "hubot": "^2.19.0",
-    "hubot-kokoro.io": "^1.1.1",
+    "hubot-kokoro.io": "^2.0.1",
     "hubot-mongodb-brain": "mohemohe/hubot-mongodb-brain",
     "hubot-scripts": "^2.17.2",
     "mersenne-twister": "^1.1.0",
@@ -18,5 +19,9 @@
   },
   "scripts": {
     "up": "yarn && docker-compose build && docker-compose up"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-plugin-import": "^2.12.0"
   }
 }
