@@ -97,7 +97,7 @@ DONE.`);
     }
   };
 
-  const cp = childProcess.spawn('docker', ['run', '--rm', '-i', '--network', 'none', image], { stdio: 'pipe' });
+  const cp = childProcess.spawn('docker', ['run', '--rm', '-i', '--network', 'none', '--log-driver', 'none', image], { stdio: 'pipe' });
   timeoutHandler = setTimeout((() => {
     cp.kill();
     return msg.send('TIMEOUT!');
