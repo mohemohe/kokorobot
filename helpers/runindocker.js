@@ -71,6 +71,14 @@ ${__stderr}
           }
         }, 1000);
       } else if ((_stdout.length < splitNum) && (_stderr.length < splitNum) && finalize) {
+        const lastStdout = _stdout.pop();
+        if (lastStdout.length !== 0) {
+          _stdout.push(lastStdout);
+        }
+        const lastStderr = _stderr.pop();
+        if (lastStderr.length !== 0) {
+          _stderr.push(lastStderr);
+        }
         return msg.send(`STDOUT
 \`\`\`
 ${_stdout.join('\n')}
