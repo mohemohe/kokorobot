@@ -2,8 +2,9 @@ const fns = require('date-fns');
 const random = require('../helpers/random');
 
 const maxHp = 100;
-const heal = 10;
+const dailyHeal = 10;
 const maxDamage = 17;
+const maxHeal = 8;
 
 module.exports = ((robot) => {
   robot.hear(/^\/社会 (.*)$/mi, (msg) => {
@@ -75,7 +76,7 @@ module.exports = ((robot) => {
       const days = Math.abs(fns.differenceInDays(fns.startOfDay(new Date(lastDamage)), fns.startOfDay(new Date())));
       if (days > 0) {
         robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_last`, new Date().getTime());
-        nextHp += heal * days;
+        nextHp += dailyHeal * days;
         if (nextHp > maxHp) {
           nextHp = maxHp;
         }
@@ -99,5 +100,33 @@ module.exports = ((robot) => {
 
     robot.brain.save();
     msg.reply(...msgArray);
+  });
+
+  robot.hear(/^@(.*)\s(えら|偉)[いくす]?.*$/m, (msg) => {
+    if (msg.message.text.indexOf('ない') !== -1 || robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`) !== 1 || robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.match[1]}_enable`) !== 1) {
+      return;
+    }
+
+    const msgArray = [];
+    const currentHp = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.match[1]}_hp`) || maxHp;
+    if (currentHp < 1) {
+      return;
+    }
+
+    let nextHp = currentHp;
+    const heal = Math.floor((random(1, maxHeal) + random(1, maxHeal) + random(1, maxHeal)) / 3);
+    if (heal % 3 === 0) {
+      msgArray.push(`${msg.message.user}のかいふくまほう！ @${msg.match[1]} はひらりと身をかわした！ 残りHP: ${nextHp}/${maxHp}`);
+    } else {
+      nextHp += heal;
+      if (nextHp > maxHp) {
+        nextHp = maxHp;
+      }
+      msgArray.push(`${msg.message.user}のかいふくまほう！ @${msg.match[1]} は${heal}回復した！ 残りHP: ${nextHp}/${maxHp}`);
+    }
+    robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.match[1]}_hp`, nextHp);
+
+    robot.brain.save();
+    msg.send(`@${msg.match[1]}`, ...msgArray);
   });
 });
