@@ -11,6 +11,7 @@ module.exports = ((robot) => {
     const mode = msg.match[1];
     const current = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`);
     const dbHp = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_hp`);
+    let rebirth = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_rebirth`) || 0;
     let hp = 100;
     switch (mode) {
       case 'register':
@@ -24,6 +25,8 @@ module.exports = ((robot) => {
         }
 
         if (hp < 1) {
+          rebirth++;
+          robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_rebirth`, rebirth);
           hp = maxHp;
         }
         robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`, 1);
@@ -31,7 +34,11 @@ module.exports = ((robot) => {
         robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_last`, new Date().getTime());
         robot.brain.save();
         if (hp === maxHp) {
-          msg.reply(`${msg.message.user}は社会に参加しました。つよく生きましょう。 残りHP: ${hp}/${maxHp}`);
+          if (rebirth > 0) {
+            msg.reply(`${msg.message.user}は社会に参加しました。つよく生きましょう。 残りHP: ${hp}/${maxHp} 転生回数: ${rebirth}`);
+          } else {
+            msg.reply(`${msg.message.user}は社会に参加しました。つよく生きましょう。 残りHP: ${hp}/${maxHp}`);
+          }
         } else {
           msg.reply(`${msg.message.user}は社会に復帰しました。つよく生きましょう。 残りHP: ${hp}/${maxHp}`);
         }
@@ -48,6 +55,8 @@ module.exports = ((robot) => {
       case 'status':
         if (robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`) !== 1) {
           msg.reply(`${msg.message.user}は社会に参加していません。`);
+        } else if (rebirth > 0) {
+          msg.reply(`${msg.message.user}は社会に参加しています。 残りHP: ${dbHp}/${maxHp} 転生回数: ${rebirth}`);
         } else {
           msg.reply(`${msg.message.user}は社会に参加しています。 残りHP: ${dbHp}/${maxHp}`);
         }
