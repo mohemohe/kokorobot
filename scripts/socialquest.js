@@ -136,4 +136,44 @@ module.exports = ((robot) => {
 
     robot.brain.save();
   });
+
+  robot.hear(/[死し]ん[だでじ]/m, (msg) => {
+    if (msg.message.text.indexOf('ない') !== -1 || robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`) !== 1 || robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.match[1]}_enable`) !== 1) {
+      return;
+    }
+
+    const msgArray = [];
+    const currentHp = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_hp`) || maxHp;
+    if (currentHp < 1) {
+      return;
+    }
+
+    const lastDamage = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_last`);
+
+    let nextHp = currentHp;
+    if (lastDamage) {
+      const days = Math.abs(fns.differenceInDays(fns.startOfDay(new Date(lastDamage)), fns.startOfDay(new Date())));
+      if (days > 0) {
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_last`, new Date().getTime());
+        nextHp += dailyHeal * days;
+        if (nextHp > maxHp) {
+          nextHp = maxHp;
+        }
+        msgArray.push(`最後に攻撃を受けてから ${days} 日経過しました。HP回復処理を行います。 ${currentHp} → ${nextHp}/${maxHp}`);
+      }
+    }
+
+    const damage = 65535;
+    nextHp -= damage;
+    msgArray.push(`社会のこうげき！ ${msg.message.user}に${damage}のダメージ！ 残りHP: ${nextHp}/${maxHp}`);
+    robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_hp`, nextHp);
+
+    if (nextHp < 1) {
+      msgArray.push(`${msg.message.user}は死んでしまった！（registerで最初からはじめる）`);
+      robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`, 0);
+    }
+
+    robot.brain.save();
+    msg.reply(...msgArray);
+  });
 });
