@@ -138,7 +138,7 @@ module.exports = ((robot) => {
   });
 
   robot.hear(/[死し]ん[だでじ]/, (msg) => {
-    if (msg.message.text.indexOf('ない') !== -1 || robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`) !== 1 || robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.match[1]}_enable`) !== 1) {
+    if (msg.message.text.indexOf('ない') !== -1 || robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`) !== 1) {
       return;
     }
 
