@@ -67,9 +67,23 @@ module.exports = ((robot) => {
     }
   });
 
-  robot.hear(/疲|苦|眠|怠|突|痛|つかれ[たてす]?|ひろう|だる[いくす]?|つら[いくす]?|ねむ[いくす]?|しんど[いくす]?|くるし[いくす]?|いた[いくす]|tukare|ｔｕｋａｒｅ|tsukare|ｔｓｕｋａｒｅ|tire|ｔｉｒｅ|tiring|ｔｉｒｉｎｇ|ちれ|たいや|タイヤ/, (msg) => {
+  robot.hear(/疲|苦|眠|怠|突|痛|つかれ[たてす]?|ひろう|だる[いくす]?|つら[いくす]?|ねむ[いくす]?|しんど[いくす]?|くるし[いくす]?|いた[いくす]|tukare|ｔｕｋａｒｅ|tsukare|ｔｓｕｋａｒｅ|tire|ｔｉｒｅ|tiring|ｔｉｒｉｎｇ|ちれ|たいや|タイヤ/gi, (msg) => {
     if (msg.message.text.indexOf('ない') !== -1 || robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`) !== 1) {
       return;
+    }
+
+    const attacks = msg.match.length;
+    let attackName;
+    switch (attacks) {
+      case 1:
+        attackName = 'こうげき！';
+        break;
+      case 2:
+        attackName = 'はやぶさ斬り！';
+        break;
+      default:
+        attackName = 'れんぞくこうげき';
+        break;
     }
 
     const msgArray = [];
@@ -93,12 +107,12 @@ module.exports = ((robot) => {
       }
     }
 
-    const damage = Math.floor((random(1, maxDamage) + random(1, maxDamage) + random(1, maxDamage)) / 3);
+    const damage = (new Array(attacks)).fill(0).map(() => Math.floor((random(1, maxDamage) + random(1, maxDamage) + random(1, maxDamage)) / 3)).reduce((a, b) => a + b);
     if (damage % 7 === 0) {
-      msgArray.push(`社会のこうげき！ ${msg.message.user}はひらりと身をかわした！ 残りHP: ${nextHp}/${maxHp}`);
+      msgArray.push(`社会の${attackName}！ ${msg.message.user}はひらりと身をかわした！ 残りHP: ${nextHp}/${maxHp}`);
     } else {
       nextHp -= damage;
-      msgArray.push(`社会のこうげき！ ${msg.message.user}に${damage}のダメージ！ 残りHP: ${nextHp}/${maxHp}`);
+      msgArray.push(`社会の${attackName}！ ${msg.message.user}に${damage}のダメージ！ 残りHP: ${nextHp}/${maxHp}`);
     }
     robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_hp`, nextHp);
 
