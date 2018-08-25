@@ -67,7 +67,7 @@ module.exports = ((robot) => {
     }
   });
 
-  robot.hear(/疲|苦|眠|怠|突|痛|つかれ[たてす]?|ひろう|だる[いくす]?|つら[いくす]?|ねむ[いくす]?|しんど[いくす]?|くるし[いくす]?|いた[いくす]|tukare|ｔｕｋａｒｅ|tsukare|ｔｓｕｋａｒｅ|tire|ｔｉｒｅ|ちれ|たいや|タイヤ/, (msg) => {
+  robot.hear(/疲|苦|眠|怠|突|痛|つかれ[たてす]?|ひろう|だる[いくす]?|つら[いくす]?|ねむ[いくす]?|しんど[いくす]?|くるし[いくす]?|いた[いくす]|tukare|ｔｕｋａｒｅ|tsukare|ｔｓｕｋａｒｅ|tire|ｔｉｒｅ|tiring|ｔｉｒｉｎｇ|ちれ|たいや|タイヤ/, (msg) => {
     if (msg.message.text.indexOf('ない') !== -1 || robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`) !== 1) {
       return;
     }
