@@ -7,11 +7,14 @@ const maxDamage = 17;
 const maxHeal = 8;
 
 module.exports = ((robot) => {
-  robot.hear(/^\/社会 (.*)$/mi, (msg) => {
+  robot.hear(/^\/社会\s*(.*?)$/mi, (msg) => {
+    console.log(msg.match)
+
     const mode = msg.match[1];
     const current = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`);
     const dbHp = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_hp`);
     let rebirth = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_rebirth`) || 0;
+    const auto = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_rebirth_auto`) || 0;
     let hp = 100;
     switch (mode) {
       case 'register':
@@ -62,8 +65,45 @@ module.exports = ((robot) => {
         }
         break;
       default:
-        msg.reply('/社会 [register|unregister|status]');
-        break;
+        switch (mode.split(' ')[0]) {
+          case 'reincarnation':
+            switch (mode.split(' ')[1]) {
+              case 'auto':
+                if (auto === 1) {
+                  msg.reply('自動転生は既に有効です。');
+                  break;
+                }
+
+                robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_rebirth_auto`, 1);
+                robot.brain.save();
+                msg.reply('自動転生を有効にしました。油断せずに生きましょう。');
+                break;
+              case 'manual':
+                if (auto !== 1) {
+                  msg.reply('自動転生は既に無効です。');
+                  break;
+                }
+
+                robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_rebirth_auto`, 0);
+                robot.brain.save();
+                msg.reply('自動転生を無効にしました。命を大事にしましょう。');
+                break;
+              case 'status':
+                if (auto !== 1) {
+                  msg.reply('自動転生は無効です。');
+                } else {
+                  msg.reply('自動転生は有効です。');
+                }
+                break;
+              default:
+                msg.reply('/社会 reincarnation [auto|manual|status]');
+                break;
+            }
+            break;
+          default:
+            msg.reply('/社会 [register|unregister|status|reincarnation]');
+            break;
+        }
     }
   });
 
@@ -183,8 +223,21 @@ module.exports = ((robot) => {
     robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_hp`, nextHp);
 
     if (nextHp < 1) {
-      msgArray.push(`${msg.message.user}は死んでしまった！（registerで最初からはじめる）`);
-      robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`, 0);
+      const auto = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_rebirth_auto`) || 0;
+      if (auto === 1) {
+        let rebirth = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_rebirth`) || 0;
+        rebirth++;
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_rebirth`, rebirth);
+        nextHp = maxHp;
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`, 1);
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_hp`, nextHp);
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_last`, new Date().getTime());
+        msgArray.push(`${msg.message.user}は死んでしまった！`);
+        msgArray.push(`温かい光が${msg.message.user}の体を包み込んだ。 残りHP: ${nextHp}/${maxHp} 転生回数: ${rebirth}`);
+      } else {
+        msgArray.push(`${msg.message.user}は死んでしまった！（registerで最初からはじめる）`);
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`, 0);
+      }
     }
 
     robot.brain.save();
