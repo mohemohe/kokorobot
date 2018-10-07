@@ -157,8 +157,21 @@ module.exports = ((robot) => {
     robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_hp`, nextHp);
 
     if (nextHp < 1) {
-      msgArray.push(`${msg.message.user}は社会の荒波に打ち勝てませんでした。来世もがんばりましょう。（registerで最初からはじめる）`);
-      robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`, 0);
+      const auto = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_rebirth_auto`) || 0;
+      if (auto === 1) {
+        let rebirth = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_rebirth`) || 0;
+        rebirth++;
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_rebirth`, rebirth);
+        nextHp = maxHp;
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`, 1);
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_hp`, nextHp);
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_last`, new Date().getTime());
+        msgArray.push(`${msg.message.user}は社会の荒波に打ち勝てませんでした。`);
+        msgArray.push(`温かい光が${msg.message.user}の体を包み込んだ。 残りHP: ${nextHp}/${maxHp} 転生回数: ${rebirth}`);
+      } else {
+        msgArray.push(`${msg.message.user}は社会の荒波に打ち勝てませんでした。来世もがんばりましょう。（registerで最初からはじめる）`);
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`, 0);
+      }
     }
 
     robot.brain.save();
