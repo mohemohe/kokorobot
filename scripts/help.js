@@ -14,6 +14,9 @@ module.exports = (robot) => {
 /dice                     さいころ
 /lgtm                     LGTM
 
+/mstdn                    🐘
+/社会                     つらい
+
 /bash                     docker run -i --rm --network none base/archlinux
 /node                     docker run -i --rm --network none node:alpine
 /php                      docker run -i --rm --network none php:alpine
