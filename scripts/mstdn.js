@@ -29,7 +29,7 @@ class Mstdn {
     Object.keys(track).forEach((room) => {
       const acct = this.robot.brain.get(`kokoroio_mstdn_${room}`) || {};
       Object.keys(acct).filter((key) => {
-        return key === msg.data.account.acct;
+        return key === msg.data.account.acct.replace('@', '__AT__');
       }).forEach(() => {
         this.robot.send({
           room,
@@ -66,7 +66,7 @@ class Mstdn {
         msg.reply(`${args[1]} さんのフォローに失敗しました（鍵垢かも？）`);
       } else {
         const acct = this.robot.brain.get(`kokoroio_mstdn_${msg.message.room}`) || {};
-        acct[data.acct] = true;
+        acct[data.acct.replace('@', '__AT__')] = true;
         this.robot.brain.set(`kokoroio_mstdn_${msg.message.room}`, acct);
 
         const track = this.robot.brain.get('kokoroio_mstdn') || {};
