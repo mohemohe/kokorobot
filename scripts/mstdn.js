@@ -20,21 +20,26 @@ class Mstdn {
   }
 
   _onStreamMessage(msg) {
-    console.log(msg);
+    if (msg.event !== 'update') {
+      console.log(msg);
+      return;
+    }
 
-    // TODO: impl
+    const track = this.robot.brain.get('kokoroio_mstdn') || {};
+    Object.keys(track).forEach((room) => {
+      const acct = this.robot.brain.get(`kokoroio_mstdn_${room}`) || {};
+      Object.keys(acct).filter((key) => {
+        return key === msg.data.account.acct;
+      }).forEach(() => {
+        this.robot.send({
+          room,
+        }, msg.data.uri);
+      });
+    });
   }
 
   _onStreamError(err) {
     console.log(err);
-  }
-
-  _addUser() {
-    // TODO: impl
-  }
-
-  _removeUser() {
-    // TODO: impl
   }
 
   status(msg) {
@@ -46,9 +51,35 @@ class Mstdn {
   }
 
   add(msg) {
-    // TODO: impl
+    const args = msg.match[1].split(' ');
+    if (args.length !== 2) {
+      msg.reply('/mstdn add [name@instance]');
+      return;
+    }
 
-    msg.reply('not implemented');
+    this.mstdn.post('follows', {
+      uri: args[1],
+    }).then((resp) => {
+      return resp.data;
+    }).then((data) => {
+      if (!data || !data.id) {
+        msg.reply(`${args[1]} さんのフォローに失敗しました（鍵垢かも？）`);
+      } else {
+        const acct = this.robot.brain.get(`kokoroio_mstdn_${msg.message.room}`) || {};
+        acct[data.acct] = true;
+        this.robot.brain.set(`kokoroio_mstdn_${msg.message.room}`, acct);
+
+        const track = this.robot.brain.get('kokoroio_mstdn') || {};
+        track[msg.message.room] = true;
+        this.robot.brain.set('kokoroio_mstdn', track);
+        this.robot.brain.save();
+
+        msg.reply(`${args[1]} さんをフォローしました`);
+      }
+    }).catch((err) => {
+      msg.reply(`${args[1]} さんのフォローに失敗しました（鍵垢かも？）`);
+      console.log(err);
+    });
   }
 
   remove(msg) {
@@ -75,7 +106,7 @@ module.exports = (robot) => {
     mstdn = new Mstdn(process.env.MASTODON_API_URL, process.env.MASTODON_ACCESS_TOKEN, robot);
   }
 
-  robot.hear(/^\/mstdn\s*(.*?)$/mi, (msg) => {
+  robot.hear(/^\/mstdn\s*(.*)$/mi, (msg) => {
     if (!allowCommand(robot, msg)) {
       return;
     }
@@ -85,7 +116,7 @@ module.exports = (robot) => {
     }
 
 
-    const mode = msg.match[1];
+    const mode = msg.match[1].split(' ')[0];
     switch (mode) {
       case 'status':
         mstdn.status(msg);
