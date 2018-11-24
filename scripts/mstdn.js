@@ -25,16 +25,16 @@ class Mstdn {
       return;
     }
 
+    console.log(msg.data);
+
     const track = this.robot.brain.get('kokoroio_mstdn') || {};
     Object.keys(track).forEach((room) => {
       const acct = this.robot.brain.get(`kokoroio_mstdn_${room}`) || {};
-      Object.keys(acct).filter((key) => {
-        return key === msg.data.account.acct.replace(/\./g, '__DOT__');
-      }).forEach(() => {
-        const tootUri = msg.data.uri || "";
+      Object.keys(acct).filter(key => key === msg.data.account.acct.replace(/\./g, '__DOT__')).forEach(() => {
+        const tootUri = msg.data.uri || '';
         this.robot.send({
           room,
-        }, tootUri.replace(/\/activity$/, ''));
+        }, `@${msg.data.account.acct} の${msg.data.reblog ? 'ブースト' : 'トゥート'}: ${tootUri.replace(/\/activity$/, '')}`);
       });
     });
   }
@@ -64,7 +64,7 @@ class Mstdn {
       return resp.data;
     }).then((data) => {
       if (!data || !data.id) {
-        msg.reply(`${args[1]} さんのフォローに失敗しました（鍵垢かも？）`);
+        msg.reply(`${args[1]} さんの追加に失敗しました（鍵垢かも？）`);
       } else {
         const acct = this.robot.brain.get(`kokoroio_mstdn_${msg.message.room}`) || {};
         acct[data.acct.replace(/\./g, '__DOT__')] = true;
@@ -75,10 +75,10 @@ class Mstdn {
         this.robot.brain.set('kokoroio_mstdn', track);
         this.robot.brain.save();
 
-        msg.reply(`${args[1]} さんをフォローしました`);
+        msg.reply(`${args[1]} さんを追加しました`);
       }
     }).catch((err) => {
-      msg.reply(`${args[1]} さんのフォローに失敗しました（鍵垢かも？）`);
+      msg.reply(`${args[1]} さんの追加に失敗しました（鍵垢かも？）`);
       console.log(err);
     });
   }
@@ -94,7 +94,7 @@ class Mstdn {
     delete acct[args[1].replace(/\./g, '__DOT__')];
     this.robot.brain.set(`kokoroio_mstdn_${msg.message.room}`, acct);
 
-    msg.reply(`${args[1]} さんを解除しました（フォローはそのままです）`);
+    msg.reply(`${args[1]} さんを削除しました`);
   }
 
   list(msg) {
