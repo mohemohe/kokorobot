@@ -83,15 +83,22 @@ class Mstdn {
   }
 
   remove(msg) {
-    // TODO: impl
+    const args = msg.match[1].split(' ');
+    if (args.length !== 2) {
+      msg.reply('/mstdn remove [name@instance]');
+      return;
+    }
 
-    msg.reply('not implemented');
+    const acct = this.robot.brain.get(`kokoroio_mstdn_${msg.message.room}`) || {};
+    delete acct[args[1].replace(/\./g, '__DOT__')];
+    this.robot.brain.set(`kokoroio_mstdn_${msg.message.room}`, acct);
+
+    msg.reply(`${args[1]} さんを解除しました（フォローはそのままです）`);
   }
 
   list(msg) {
-    // TODO: impl
-
-    msg.reply('not implemented');
+    const acct = this.robot.brain.get(`kokoroio_mstdn_${msg.message.room}`) || {};
+    msg.reply(`\`\`\`${Object.keys(acct).map(_ => _.replace(/__DOT_/g, '.')).join('\n')}\`\`\``);
   }
 
   reconnect(msg) {
@@ -112,9 +119,8 @@ module.exports = (robot) => {
     }
 
     if (!mstdn) {
-      msg.reply('`マストドン API URL`または`マストドン アクセストークン`が設定されていません\n環境変数`MASTODON_API_URL`と`MASTODON_ACCESS_TOKEN`に設定してください')
+      msg.reply('`マストドン API URL`または`マストドン アクセストークン`が設定されていません\n環境変数`MASTODON_API_URL`と`MASTODON_ACCESS_TOKEN`に設定してください');
     }
-
 
     const mode = msg.match[1].split(' ')[0];
     switch (mode) {
@@ -126,6 +132,9 @@ module.exports = (robot) => {
         break;
       case 'remove':
         mstdn.remove(msg);
+        break;
+      case 'list':
+        mstdn.list(msg);
         break;
       case 'reconnect':
         mstdn.reconnect(msg);
