@@ -31,9 +31,10 @@ class Mstdn {
       Object.keys(acct).filter((key) => {
         return key === msg.data.account.acct.replace(/\./g, '__DOT__');
       }).forEach(() => {
+        const tootUri = msg.data.uri || "";
         this.robot.send({
           room,
-        }, msg.data.uri);
+        }, tootUri.replace(/\/activity$/, ''));
       });
     });
   }
