@@ -14,6 +14,16 @@ class Mstdn {
   }
 
   _connect() {
+    if (this.listener) {
+      try {
+        this.listener.off('message', msg => this._onStreamMessage(msg));
+        this.listener.off('error', err => this._onStreamMessage(err));
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.listener = null;
+      }
+    }
     this.listener = this.mstdn.stream('streaming/user');
     this.listener.on('message', msg => this._onStreamMessage(msg));
     this.listener.on('error', err => this._onStreamMessage(err));
@@ -27,10 +37,10 @@ class Mstdn {
 
     console.log(msg.data);
 
-    const track = this.robot.brain.get('kokoroio_mstdn') || {};
-    Object.keys(track).forEach((room) => {
-      const acct = this.robot.brain.get(`kokoroio_mstdn_${room}`) || {};
-      Object.keys(acct).filter(key => key === msg.data.account.acct.replace(/\./g, '__DOT__')).forEach(() => {
+    const rooms = this.robot.brain.get('kokoroio_mstdn') || {};
+    Object.keys(rooms).forEach((room) => {
+      const track = this.robot.brain.get(`kokoroio_mstdn_${room}`) || {};
+      Object.keys(track).filter(key => Mstdn.unescape(key) === msg.data.account.acct).forEach(() => {
         const tootUri = msg.data.uri || '';
         this.robot.send({
           room,
@@ -41,6 +51,7 @@ class Mstdn {
 
   _onStreamError(err) {
     console.log(err);
+    this.reconnect();
   }
 
   status(msg) {
@@ -60,14 +71,12 @@ class Mstdn {
 
     this.mstdn.post('follows', {
       uri: args[1],
-    }).then((resp) => {
-      return resp.data;
-    }).then((data) => {
+    }).then(resp => resp.data).then((data) => {
       if (!data || !data.id) {
         msg.reply(`${args[1]} さんの追加に失敗しました（鍵垢かも？）`);
       } else {
         const acct = this.robot.brain.get(`kokoroio_mstdn_${msg.message.room}`) || {};
-        acct[data.acct.replace(/\./g, '__DOT__')] = true;
+        acct[Mstdn.escape(data.acct)] = true;
         this.robot.brain.set(`kokoroio_mstdn_${msg.message.room}`, acct);
 
         const track = this.robot.brain.get('kokoroio_mstdn') || {};
@@ -91,7 +100,7 @@ class Mstdn {
     }
 
     const acct = this.robot.brain.get(`kokoroio_mstdn_${msg.message.room}`) || {};
-    delete acct[args[1].replace(/\./g, '__DOT__')];
+    delete acct[Mstdn.escape(args[1])];
     this.robot.brain.set(`kokoroio_mstdn_${msg.message.room}`, acct);
 
     msg.reply(`${args[1]} さんを削除しました`);
@@ -99,12 +108,20 @@ class Mstdn {
 
   list(msg) {
     const acct = this.robot.brain.get(`kokoroio_mstdn_${msg.message.room}`) || {};
-    msg.reply(`\`\`\`${Object.keys(acct).map(_ => _.replace(/__DOT_/g, '.')).join('\n')}\`\`\``);
+    msg.reply(`\`\`\`${Object.keys(acct).map(_ => Mstdn.unescape(_)).join('\n')}\`\`\``);
   }
 
   reconnect(msg) {
     this._connect();
     msg.reply(`\`${process.env.MASTODON_API_URL}streaming/user\`に再接続しました`);
+  }
+
+  static escape(text) {
+    return text.replace(/\./g, '__DOT__');
+  }
+
+  static unescape(text) {
+    return text.replace(/__DOT__/g, '.');
   }
 }
 
