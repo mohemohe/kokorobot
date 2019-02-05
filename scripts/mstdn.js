@@ -79,7 +79,10 @@ class Mstdn {
       return;
     }
 
-    const target = args[1];
+    let target = args[1];
+    if (target.startsWith("@")) {
+      target = target.substring(1);
+    }
 
     let mode = Mode.ALL;
     if (args.length === 3) {
