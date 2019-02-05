@@ -1,6 +1,11 @@
 const Mastodon = require('mastodon-api');
 const allowCommand = require('../helpers/allowcommand');
 
+const Mode = {
+  ALL: "all",
+  IMAGE: "image",
+}
+
 class Mstdn {
   constructor(apiUrl, accessToken, robot) {
     this.mstdn = new Mastodon({
@@ -64,30 +69,41 @@ class Mstdn {
 
   add(msg) {
     const args = msg.match[1].split(' ');
-    if (args.length !== 2) {
-      msg.reply('/mstdn add [name@instance]');
+    if (args.length !== 2 && args.length !== 3) {
+      msg.reply('/mstdn add [name@instance] [all|image]');
       return;
     }
 
+    const target = args[1];
+
+    let mode = Mode.ALL;
+    if (args.length === 3) {
+      switch (args[2]) {
+        case "image":
+          mode = Mode.IMAGE;
+          break;
+      }
+    }
+
     this.mstdn.post('follows', {
-      uri: args[1],
+      uri: target,
     }).then(resp => resp.data).then((data) => {
       if (!data || !data.id) {
-        msg.reply(`${args[1]} さんの追加に失敗しました（鍵垢かも？）`);
+        msg.reply(`${target} さんの追加に失敗しました（鍵垢かも？）`);
       } else {
         const acct = this.robot.brain.get(`kokoroio_mstdn_${msg.message.room}`) || {};
-        acct[Mstdn.escape(data.acct)] = true;
+        acct[Mstdn.escape(data.acct)] = mode;
         this.robot.brain.set(`kokoroio_mstdn_${msg.message.room}`, acct);
 
         const track = this.robot.brain.get('kokoroio_mstdn') || {};
-        track[msg.message.room] = true;
+        track[msg.message.room] = mode;
         this.robot.brain.set('kokoroio_mstdn', track);
         this.robot.brain.save();
 
-        msg.reply(`${args[1]} さんを追加しました`);
+        msg.reply(`${target} さんを追加しました`);
       }
     }).catch((err) => {
-      msg.reply(`${args[1]} さんの追加に失敗しました（鍵垢かも？）`);
+      msg.reply(`${target} さんの追加に失敗しました（鍵垢かも？）`);
       console.log(err);
     });
   }
