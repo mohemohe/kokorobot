@@ -46,6 +46,11 @@ class Mstdn {
     Object.keys(rooms).forEach((room) => {
       const track = this.robot.brain.get(`kokoroio_mstdn_${room}`) || {};
       Object.keys(track).filter(key => Mstdn.unescape(key) === msg.data.account.acct).forEach(() => {
+        const acct = Mstdn.escape(msg.data.account.acct)
+        console.log("mode:", track[acct])
+        if (track[acct] === Mode.IMAGE && (msg.data.media_attachments || []).length === 0) {
+          return;
+        }
         const tootUri = msg.data.uri || '';
         this.robot.send({
           room,
