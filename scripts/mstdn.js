@@ -133,6 +133,7 @@ class Mstdn {
   list(msg) {
     const acct = this.robot.brain.get(`kokoroio_mstdn_${msg.message.room}`) || {};
     msg.reply(`
+
 \`\`\`${
       Object.keys(acct).map(screenName => {
         // FIXME: 何度も使ってる気がするから切り出したほうが良さげ
