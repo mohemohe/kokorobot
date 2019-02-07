@@ -132,7 +132,20 @@ class Mstdn {
 
   list(msg) {
     const acct = this.robot.brain.get(`kokoroio_mstdn_${msg.message.room}`) || {};
-    msg.reply(`\`\`\`${Object.keys(acct).map(_ => Mstdn.unescape(_)).join('\n')}\`\`\``);
+    msg.reply(`
+\`\`\`${
+      Object.keys(acct).map(screenName => {
+        // FIXME: 何度も使ってる気がするから切り出したほうが良さげ
+        let mode = Mode.ALL;
+        switch (acct[screenName]) {
+          case Mode.IMAGE:
+            mode = Mode.IMAGE;
+            break;
+        }
+
+        return `${Mstdn.unescape(screenName)}: ${mode}`;
+      }).join('\n')
+}\`\`\``);
   }
 
   reconnect(msg) {
