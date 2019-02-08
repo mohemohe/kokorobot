@@ -40,8 +40,6 @@ class Mstdn {
       return;
     }
 
-    console.log(msg.data);
-
     const rooms = this.robot.brain.get('kokoroio_mstdn') || {};
     Object.keys(rooms).forEach((room) => {
       const track = this.robot.brain.get(`kokoroio_mstdn_${room}`) || {};
@@ -51,7 +49,10 @@ class Mstdn {
         if (track[acct] === Mode.IMAGE && (msg.data.media_attachments || []).length === 0) {
           return;
         }
-        const tootUri = msg.data.uri || '';
+
+        console.log(msg.data);
+
+        const tootUri = msg.data.url || msg.data.uri || '';
         this.robot.send({
           room,
         }, `@${msg.data.account.acct} の${msg.data.reblog ? 'ブースト' : 'トゥート'}: ${tootUri.replace(/\/activity$/, '')}`);
