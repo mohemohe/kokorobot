@@ -194,23 +194,17 @@ ${
     }
 
     const dbTarget = Mstdn.escape(target);
-
     const acct = this.robot.brain.get(`kokoroio_mstdn_${msg.message.room}`) || {};
+    let mode = Mode.ALL;
+    switch (acct[dbTarget]) {
+      case Mode.IMAGE:
+        mode = Mode.IMAGE;
+        break;
+    }
     msg.reply(`
 
 \`\`\`
-${
-      (() => {
-        let mode = Mode.ALL;
-        switch (acct[dbTarget]) {
-          case Mode.IMAGE:
-            mode = Mode.IMAGE;
-            break;
-        }
-
-        return `${Mstdn.unescape(target)}: ${mode}`;
-      }).join('\n')
-}
+${Mstdn.unescape(dbTarget)}: ${mode}
 \`\`\``);
   }
 
