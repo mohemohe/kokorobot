@@ -81,14 +81,20 @@ class Mstdn {
     }
 
     let target = args[1];
-    if (target.startsWith("@")) {
+    if (target.startsWith('@')) {
       target = target.substring(1);
+    }
+    if (target.startsWith('https://') || target.startsWith('http://')) {
+      const match = target.match(/https?:\/\/(.*?)\/@?(.*?)\/.*/);
+      if (match.length === 3 && match[1] !== '' && match[2] !== '') {
+        target = `${match[2]}@${match[1]}`
+      }
     }
 
     let mode = Mode.ALL;
     if (args.length === 3) {
       switch (args[2]) {
-        case "image":
+        case 'image':
           mode = Mode.IMAGE;
           break;
       }
