@@ -76,7 +76,7 @@ class Mstdn {
   add(msg) {
     const args = msg.match[1].split(' ');
     if (args.length !== 2 && args.length !== 3) {
-      msg.reply('/mstdn add [name@instance] [all|image]');
+      msg.reply('/mstdn add [name@instance|toot_url] [all|image]');
       return;
     }
 
@@ -84,6 +84,8 @@ class Mstdn {
     if (target.startsWith('@')) {
       target = target.substring(1);
     }
+
+    // FIXME: コピペ
     if (target.startsWith('https://') || target.startsWith('http://')) {
       const match = target.match(/https?:\/\/(.*?)\/@?(.*?)\/.*/);
       if (match.length === 3 && match[1] !== '' && match[2] !== '') {
@@ -126,15 +128,28 @@ class Mstdn {
   remove(msg) {
     const args = msg.match[1].split(' ');
     if (args.length !== 2) {
-      msg.reply('/mstdn remove [name@instance]');
+      msg.reply('/mstdn remove [name@instance|toot_url]');
       return;
     }
 
+    let target = args[1];
+    if (target.startsWith('@')) {
+      target = target.substring(1);
+    }
+
+    // FIXME: コピペ
+    if (target.startsWith('https://') || target.startsWith('http://')) {
+      const match = target.match(/https?:\/\/(.*?)\/@?(.*?)\/.*/);
+      if (match.length === 3 && match[1] !== '' && match[2] !== '') {
+        target = `${match[2]}@${match[1]}`
+      }
+    }
+
     const acct = this.robot.brain.get(`kokoroio_mstdn_${msg.message.room}`) || {};
-    delete acct[Mstdn.escape(args[1])];
+    delete acct[Mstdn.escape(target)];
     this.robot.brain.set(`kokoroio_mstdn_${msg.message.room}`, acct);
 
-    msg.reply(`${args[1]} さんを削除しました`);
+    msg.reply(`${target} さんを削除しました`);
   }
 
   list(msg) {
@@ -153,6 +168,47 @@ ${
         }
 
         return `${Mstdn.unescape(screenName)}: ${mode}`;
+      }).join('\n')
+}
+\`\`\``);
+  }
+
+  find(msg) {
+    const args = msg.match[1].split(' ');
+    if (args.length !== 2) {
+      msg.reply('/mstdn find [name@instance|toot_url]');
+      return;
+    }
+
+    let target = args[1];
+    if (target.startsWith('@')) {
+      target = target.substring(1);
+    }
+
+    // FIXME: コピペ
+    if (target.startsWith('https://') || target.startsWith('http://')) {
+      const match = target.match(/https?:\/\/(.*?)\/@?(.*?)\/.*/);
+      if (match.length === 3 && match[1] !== '' && match[2] !== '') {
+        target = `${match[2]}@${match[1]}`
+      }
+    }
+
+    const dbTarget = Mstdn.escape(target);
+
+    const acct = this.robot.brain.get(`kokoroio_mstdn_${msg.message.room}`) || {};
+    msg.reply(`
+
+\`\`\`
+${
+      (() => {
+        let mode = Mode.ALL;
+        switch (acct[dbTarget]) {
+          case Mode.IMAGE:
+            mode = Mode.IMAGE;
+            break;
+        }
+
+        return `${Mstdn.unescape(target)}: ${mode}`;
       }).join('\n')
 }
 \`\`\``);
@@ -201,11 +257,14 @@ module.exports = (robot) => {
       case 'list':
         mstdn.list(msg);
         break;
+      case 'find':
+        mstdn.find(msg);
+        break;
       case 'reconnect':
         mstdn.reconnect(msg);
         break;
       default:
-        msg.reply('/mstdn [status|auth|add|remove|list|reconnect]');
+        msg.reply('/mstdn [status|auth|add|remove|list|find|reconnect]');
         break;
     }
   });
