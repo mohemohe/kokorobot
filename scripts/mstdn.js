@@ -154,23 +154,44 @@ class Mstdn {
 
   list(msg) {
     const acct = this.robot.brain.get(`kokoroio_mstdn_${msg.message.room}`) || {};
-    msg.reply(`
+    const screenNames = Object.keys(acct);
+    if (screenNames.length === 0) {
+      msg.reply(`登録されていません`);
+      return;
+    }
+    let count = 0;
+    let page = [];
+    screenNames.forEach(screenName => {
+      // FIXME: 何度も使ってる気がするから切り出したほうが良さげ
+      let mode = Mode.ALL;
+      switch (acct[screenName]) {
+        case Mode.IMAGE:
+          mode = Mode.IMAGE;
+          break;
+      }
+
+      const line = `${Mstdn.unescape(screenName)}: ${mode}`;
+      count += line.length;
+      page.push(line);
+
+      if (count > 2500) {
+        msg.reply(`
 
 \`\`\`
-${
-      Object.keys(acct).map(screenName => {
-        // FIXME: 何度も使ってる気がするから切り出したほうが良さげ
-        let mode = Mode.ALL;
-        switch (acct[screenName]) {
-          case Mode.IMAGE:
-            mode = Mode.IMAGE;
-            break;
-        }
-
-        return `${Mstdn.unescape(screenName)}: ${mode}`;
-      }).join('\n')
-}
+${page.join("\n")}
 \`\`\``);
+        count = 0;
+        page = [];
+      }
+    });
+
+    if (count > 0) {
+      msg.reply(`
+
+\`\`\`
+${page.join("\n")}
+\`\`\``);
+    }
   }
 
   find(msg) {
