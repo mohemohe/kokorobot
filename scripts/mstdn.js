@@ -2,9 +2,9 @@ const Mastodon = require('mastodon-api');
 const allowCommand = require('../helpers/allowcommand');
 
 const Mode = {
-  ALL: "all",
-  IMAGE: "image",
-}
+  ALL: 'all',
+  IMAGE: 'image',
+};
 
 class Mstdn {
   constructor(apiUrl, accessToken, robot) {
@@ -44,15 +44,15 @@ class Mstdn {
     Object.keys(rooms).forEach((room) => {
       const track = this.robot.brain.get(`kokoroio_mstdn_${room}`) || {};
       Object.keys(track).filter(key => Mstdn.unescape(key) === msg.data.account.acct).forEach(() => {
-        const acct = Mstdn.escape(msg.data.account.acct)
-        console.log("mode:", track[acct])
+        const acct = Mstdn.escape(msg.data.account.acct);
+        console.log('mode:', track[acct]);
         if (track[acct] === Mode.IMAGE && (msg.data.media_attachments || []).length === 0) {
           return;
         }
 
         console.log(msg.data);
 
-        const tootUri = msg.data.url || msg.data.uri || '';
+        const tootUri = msg.data.uri || msg.data.url || '';
         this.robot.send({
           room,
         }, `@${msg.data.account.acct} の${msg.data.reblog ? 'ブースト' : 'トゥート'}: ${tootUri.replace(/\/activity$/, '')}`);
@@ -89,7 +89,7 @@ class Mstdn {
     if (target.startsWith('https://') || target.startsWith('http://')) {
       const match = target.match(/https?:\/\/(.*?)\/@?(.*?)\/.*/);
       if (match.length === 3 && match[1] !== '' && match[2] !== '') {
-        target = `${match[2]}@${match[1]}`
+        target = `${match[2]}@${match[1]}`;
       }
     }
 
@@ -98,6 +98,9 @@ class Mstdn {
       switch (args[2]) {
         case 'image':
           mode = Mode.IMAGE;
+          break;
+        default:
+          // NOP
           break;
       }
     }
@@ -141,7 +144,7 @@ class Mstdn {
     if (target.startsWith('https://') || target.startsWith('http://')) {
       const match = target.match(/https?:\/\/(.*?)\/@?(.*?)\/.*/);
       if (match.length === 3 && match[1] !== '' && match[2] !== '') {
-        target = `${match[2]}@${match[1]}`
+        target = `${match[2]}@${match[1]}`;
       }
     }
 
@@ -156,17 +159,20 @@ class Mstdn {
     const acct = this.robot.brain.get(`kokoroio_mstdn_${msg.message.room}`) || {};
     const screenNames = Object.keys(acct);
     if (screenNames.length === 0) {
-      msg.reply(`登録されていません`);
+      msg.reply('登録されていません');
       return;
     }
     let count = 0;
     let page = [];
-    screenNames.forEach(screenName => {
+    screenNames.forEach((screenName) => {
       // FIXME: 何度も使ってる気がするから切り出したほうが良さげ
       let mode = Mode.ALL;
       switch (acct[screenName]) {
         case Mode.IMAGE:
           mode = Mode.IMAGE;
+          break;
+        default:
+          // NOP
           break;
       }
 
@@ -178,7 +184,7 @@ class Mstdn {
         msg.reply(`
 
 \`\`\`
-${page.join("\n")}
+${page.join('\n')}
 \`\`\``);
         count = 0;
         page = [];
@@ -189,7 +195,7 @@ ${page.join("\n")}
       msg.reply(`
 
 \`\`\`
-${page.join("\n")}
+${page.join('\n')}
 \`\`\``);
     }
   }
@@ -210,7 +216,7 @@ ${page.join("\n")}
     if (target.startsWith('https://') || target.startsWith('http://')) {
       const match = target.match(/https?:\/\/(.*?)\/@?(.*?)\/.*/);
       if (match.length === 3 && match[1] !== '' && match[2] !== '') {
-        target = `${match[2]}@${match[1]}`
+        target = `${match[2]}@${match[1]}`;
       }
     }
 
@@ -220,6 +226,9 @@ ${page.join("\n")}
     switch (acct[dbTarget]) {
       case Mode.IMAGE:
         mode = Mode.IMAGE;
+        break;
+      default:
+        // NOP
         break;
     }
     msg.reply(`
