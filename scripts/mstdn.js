@@ -52,7 +52,7 @@ class Mstdn {
 
         console.log(msg.data);
 
-        const tootUri = msg.data.uri || msg.data.url || '';
+        const tootUri = msg.data.url || msg.data.uri || '';
         this.robot.send({
           room,
         }, `@${msg.data.account.acct} の${msg.data.reblog ? 'ブースト' : 'トゥート'}: ${tootUri.replace(/\/activity$/, '')}`);
