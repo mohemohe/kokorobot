@@ -30,8 +30,11 @@ class Mstdn {
       }
     }
     this.listener = this.mstdn.stream('streaming/user');
-    this.listener.on('message', msg => this._onStreamMessage(msg));
-    this.listener.on('error', err => this._onStreamMessage(err));
+    if (this.listener) {
+      console.log("mastodon userstream connected");
+      this.listener.on('message', msg => this._onStreamMessage(msg));
+      this.listener.on('error', err => this._onStreamMessage(err));
+    }
   }
 
   _onStreamMessage(msg) {
@@ -240,7 +243,9 @@ ${Mstdn.unescape(dbTarget)}: ${mode}
 
   reconnect(msg) {
     this._connect();
-    msg.reply(`\`${process.env.MASTODON_API_URL}streaming/user\`に再接続しました`);
+    if (msg) {
+      msg.reply(`\`${process.env.MASTODON_API_URL}streaming/user\`に再接続しました`);
+    }
   }
 
   static escape(text) {
