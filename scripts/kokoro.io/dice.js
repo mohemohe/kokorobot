@@ -1,5 +1,5 @@
-const random = require('../helpers/random');
-const allowCommand = require('../helpers/allowcommand');
+const random = require('../../helpers/random');
+const allowCommand = require('../../helpers/allowcommand');
 
 module.exports = (robot) => {
   robot.hear(/^\/dice(.*)/mi, (msg) => {

@@ -1,5 +1,5 @@
 const axios = require('axios');
-const allowCommand = require('../helpers/allowcommand');
+const allowCommand = require('../../helpers/allowcommand');
 
 module.exports = (robot) => {
   robot.hear(/^\/lgtm$/mi, async (msg) => {

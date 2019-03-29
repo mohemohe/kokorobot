@@ -1,5 +1,5 @@
-const allowCommand = require('../helpers/allowcommand');
-const runInDocker = require('../helpers/runindocker');
+const allowCommand = require('../../helpers/allowcommand');
+const runInDocker = require('../../helpers/runindocker');
 
 module.exports = (robot) => {
   robot.hear(/^\/bash(.*)/mi, (msg) => {

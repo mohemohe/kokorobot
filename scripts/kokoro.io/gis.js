@@ -1,6 +1,6 @@
 const GoogleImages = require('google-images');
-const allowCommand = require('../helpers/allowcommand');
-const random = require('../helpers/random');
+const allowCommand = require('../../helpers/allowcommand');
+const random = require('../../helpers/random');
 
 function checkGoogle(msg) {
   if (process.env.GOOGLE_CSE_ID && process.env.GOOGLE_API_KEY) {

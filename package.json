@@ -10,6 +10,7 @@
     "axios": "^0.18.0",
     "date-fns": "^1.29.0",
     "eslint-config-airbnb-base": "^13.0.0",
+    "glob": "^7.1.3",
     "google-images": "^2.1.0",
     "hubot": "^2.19.0",
     "hubot-kokoro.io": "^2.0.1",

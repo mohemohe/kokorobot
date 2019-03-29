@@ -1,4 +1,4 @@
-const allowCommand = require('../helpers/allowcommand');
+const allowCommand = require('../../helpers/allowcommand');
 
 module.exports = (robot) => {
   robot.hear(/^\/help$/mi, (msg) => {

@@ -1,5 +1,5 @@
 const fns = require('date-fns');
-const random = require('../helpers/random');
+const random = require('../../helpers/random');
 
 const maxHp = 100;
 const dailyHeal = 10;

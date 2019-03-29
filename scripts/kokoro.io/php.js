@@ -1,8 +1,8 @@
-const allowCommand = require('../helpers/allowcommand');
-const runInDocker = require('../helpers/runindocker');
+const allowCommand = require('../../helpers/allowcommand');
+const runInDocker = require('../../helpers/runindocker');
 
 module.exports = (robot) => {
-  robot.hear(/^\/node(.*)/mi, (msg) => {
+  robot.hear(/^\/php(.*)/mi, (msg) => {
     if (!allowCommand(robot, msg)) {
       return;
     }
@@ -13,11 +13,11 @@ module.exports = (robot) => {
       input = input.replace(/\/stream/, '');
       stream = true;
     }
-    const script = input.replace('/node', '');
+    const script = input.replace('/php', '');
 
-    console.log('node: --------');
+    console.log('php: ---------');
     console.log(script);
     console.log('--------------');
-    runInDocker(msg, 'node:alpine', script, stream);
+    runInDocker(msg, 'php:alpine', script, stream);
   });
 };

@@ -1,8 +1,8 @@
-const allowCommand = require('../helpers/allowcommand');
-const runInDocker = require('../helpers/runindocker');
+const allowCommand = require('../../helpers/allowcommand');
+const runInDocker = require('../../helpers/runindocker');
 
 module.exports = (robot) => {
-  robot.hear(/^\/python(.*)/mi, (msg) => {
+  robot.hear(/^\/ruby(.*)/mi, (msg) => {
     if (!allowCommand(robot, msg)) {
       return;
     }
@@ -13,11 +13,11 @@ module.exports = (robot) => {
       input = input.replace(/\/stream/, '');
       stream = true;
     }
-    const script = input.replace('/python', '');
+    const script = input.replace('/ruby', '');
 
-    console.log('python: ------');
+    console.log('ruby: --------');
     console.log(script);
     console.log('--------------');
-    runInDocker(msg, 'python:alpine', script, stream);
+    runInDocker(msg, 'ruby:alpine', script, stream);
   });
 };

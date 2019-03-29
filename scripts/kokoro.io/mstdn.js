@@ -1,5 +1,5 @@
 const Mastodon = require('mastodon-api');
-const allowCommand = require('../helpers/allowcommand');
+const allowCommand = require('../../helpers/allowcommand');
 
 const Mode = {
   ALL: 'all',
