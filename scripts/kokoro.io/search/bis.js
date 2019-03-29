@@ -1,7 +1,8 @@
 const util = require('util');
 const Bing = require('node-bing-api');
-const allowCommand = require('../../helpers/allowcommand');
-const random = require('../../helpers/random');
+const regex = require('../../../helpers/regex');
+const allowCommand = require('../../../helpers/allowcommand');
+const random = require('../../../helpers/random');
 
 function checkBing(msg) {
   if (process.env.BING_API_KEY) {
@@ -15,7 +16,7 @@ function checkBing(msg) {
 }
 
 module.exports = (robot) => {
-  robot.hear(/^\/bis (.*)/mi, (msg) => {
+  robot.hear(regex('/bis (.*)/mi'), (msg) => {
     if (!allowCommand(robot, msg)) {
       return;
     }

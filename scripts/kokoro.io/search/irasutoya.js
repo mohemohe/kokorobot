@@ -1,8 +1,9 @@
 const irasutoya = require('@fand/irasutoya');
-const allowCommand = require('../../helpers/allowcommand');
+const regex = require('../../../helpers/regex');
+const allowCommand = require('../../../helpers/allowcommand');
 
 module.exports = (robot) => {
-  robot.hear(/^\/irasutoya (.*)/mi, (msg) => {
+  robot.hear(regex('/irasutoya (.*)/mi'), (msg) => {
     if (!allowCommand(robot, msg)) {
       return;
     }

@@ -1,7 +1,8 @@
 const Haiku = require('@mohemohe/haiku.js').default;
+const regex = require('../../helpers/regex');
 
 module.exports = (robot) => {
-  robot.hear(/^\/ikku(.*)$/mi, (msg) => {
+  robot.hear(regex('/ikku(.*)$/mi'), (msg) => {
     const command = msg.match[1].trim();
     const status = robot.brain.get(`kokoroio_ikku_enable_${msg.envelope.room}`);
     switch (command) {

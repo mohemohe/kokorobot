@@ -1,4 +1,5 @@
 const Mastodon = require('mastodon-api');
+const regex = require('../../helpers/regex');
 const allowCommand = require('../../helpers/allowcommand');
 
 const Mode = {
@@ -263,7 +264,7 @@ module.exports = (robot) => {
     mstdn = new Mstdn(process.env.MASTODON_API_URL, process.env.MASTODON_ACCESS_TOKEN, robot);
   }
 
-  robot.hear(/^\/mstdn\s*(.*)$/mi, (msg) => {
+  robot.hear(regex('/mstdn\s*(.*)$/mi'), (msg) => {
     if (!allowCommand(robot, msg)) {
       return;
     }

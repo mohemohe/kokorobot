@@ -1,5 +1,7 @@
+const regex = require('../../helpers/regex');
+
 module.exports = (robot) => {
-  robot.hear(/^\/command (.*)$/mi, (msg) => {
+  robot.hear(regex('/command (.*)/mi'), (msg) => {
     let status = msg.match[1];
     switch (status) {
       case 'enable':

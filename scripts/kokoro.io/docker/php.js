@@ -1,8 +1,9 @@
-const allowCommand = require('../../helpers/allowcommand');
-const runInDocker = require('../../helpers/runindocker');
+const regex = require('../../../helpers/regex');
+const allowCommand = require('../../../helpers/allowcommand');
+const runInDocker = require('../../../helpers/runindocker');
 
 module.exports = (robot) => {
-  robot.hear(/^\/php(.*)/mi, (msg) => {
+  robot.hear(regex('/php (.*)/mi'), (msg) => {
     if (!allowCommand(robot, msg)) {
       return;
     }

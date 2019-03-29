@@ -1,5 +1,6 @@
 const fns = require('date-fns');
 const random = require('../../helpers/random');
+const regex = require('../../helpers/regex');
 
 const maxHp = 100;
 const dailyHeal = 10;
@@ -7,7 +8,7 @@ const maxDamage = 17;
 const maxHeal = 8;
 
 module.exports = ((robot) => {
-  robot.hear(/^\/社会\s*(.*?)$/mi, (msg) => {
+  robot.hear(regex('/社会\s*(.*?)$/mi'), (msg) => {
     console.log(msg.match)
 
     const mode = msg.match[1];
