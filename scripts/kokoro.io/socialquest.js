@@ -1,6 +1,6 @@
 const fns = require('date-fns');
 const random = require('../../helpers/random');
-const regex = require('../../helpers/regex');
+const Prefix = require('../../helpers/prefix');
 
 const maxHp = 100;
 const dailyHeal = 10;
@@ -8,8 +8,8 @@ const maxDamage = 17;
 const maxHeal = 8;
 
 module.exports = ((robot) => {
-  robot.hear(regex('/社会\s*(.*?)$/mi'), (msg) => {
-    console.log(msg.match)
+  robot.hear(Prefix.regex('/社会\\s*(.*?)$/mi'), (msg) => {
+    console.log(msg.match);
 
     const mode = msg.match[1];
     const current = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`);
@@ -97,12 +97,12 @@ module.exports = ((robot) => {
                 }
                 break;
               default:
-                msg.reply('/社会 reincarnation [auto|manual|status]');
+                msg.reply(`${Prefix.text}社会 reincarnation [auto|manual|status]`);
                 break;
             }
             break;
           default:
-            msg.reply('/社会 [register|unregister|status|reincarnation]');
+            msg.reply(`${Prefix.text}社会 [register|unregister|status|reincarnation]`);
             break;
         }
     }

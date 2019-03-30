@@ -1,5 +1,5 @@
 const Mastodon = require('mastodon-api');
-const regex = require('../../helpers/regex');
+const Prefix = require('../../helpers/prefix');
 const allowCommand = require('../../helpers/allowcommand');
 
 const Mode = {
@@ -32,7 +32,7 @@ class Mstdn {
     }
     this.listener = this.mstdn.stream('streaming/user');
     if (this.listener) {
-      console.log("mastodon userstream connected");
+      console.log('mastodon userstream connected');
       this.listener.on('message', msg => this._onStreamMessage(msg));
       this.listener.on('error', err => this._onStreamMessage(err));
     }
@@ -80,7 +80,7 @@ class Mstdn {
   add(msg) {
     const args = msg.match[1].split(' ');
     if (args.length !== 2 && args.length !== 3) {
-      msg.reply('/mstdn add [name@instance|toot_url] [all|image]');
+      msg.reply(`${Prefix.text}mstdn add [name@instance|toot_url] [all|image]`);
       return;
     }
 
@@ -135,7 +135,7 @@ class Mstdn {
   remove(msg) {
     const args = msg.match[1].split(' ');
     if (args.length !== 2) {
-      msg.reply('/mstdn remove [name@instance|toot_url]');
+      msg.reply(`${Prefix.text}mstdn remove [name@instance|toot_url]`);
       return;
     }
 
@@ -207,7 +207,7 @@ ${page.join('\n')}
   find(msg) {
     const args = msg.match[1].split(' ');
     if (args.length !== 2) {
-      msg.reply('/mstdn find [name@instance|toot_url]');
+      msg.reply(`${Prefix.text}mstdn find [name@instance|toot_url]`);
       return;
     }
 
@@ -264,7 +264,7 @@ module.exports = (robot) => {
     mstdn = new Mstdn(process.env.MASTODON_API_URL, process.env.MASTODON_ACCESS_TOKEN, robot);
   }
 
-  robot.hear(regex('/mstdn\s*(.*)$/mi'), (msg) => {
+  robot.hear(Prefix.regex('/mstdn\\s*(.*)$/mi'), (msg) => {
     if (!allowCommand(robot, msg)) {
       return;
     }
@@ -294,7 +294,7 @@ module.exports = (robot) => {
         mstdn.reconnect(msg);
         break;
       default:
-        msg.reply('/mstdn [status|auth|add|remove|list|find|reconnect]');
+        msg.reply(`${Prefix.text}mstdn [status|auth|add|remove|list|find|reconnect]`);
         break;
     }
   });

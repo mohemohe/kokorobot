@@ -1,9 +1,9 @@
 const axios = require('axios');
-const regex = require('../../../helpers/regex');
+const Prefix = require('../../../helpers/prefix');
 const allowCommand = require('../../../helpers/allowcommand');
 
 module.exports = (robot) => {
-  robot.hear(regex('/lgtm/'), async (msg) => {
+  robot.hear(Prefix.regex('/lgtm/'), async (msg) => {
     if (!allowCommand(robot, msg)) {
       return;
     }

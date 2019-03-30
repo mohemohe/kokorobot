@@ -1,9 +1,9 @@
-const regex = require('../../helpers/regex');
+const Prefix = require('../../helpers/prefix');
 const random = require('../../helpers/random');
 const allowCommand = require('../../helpers/allowcommand');
 
 module.exports = (robot) => {
-  robot.hear(regex('/dice(.*)/mi'), (msg) => {
+  robot.hear(Prefix.regex('/dice(.*)/mi'), (msg) => {
     let _times;
     if (!allowCommand(robot, msg)) {
       return;

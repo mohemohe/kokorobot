@@ -1,4 +1,4 @@
-const regex = require('../../../helpers/regex');
+const Prefix = require('../../../helpers/prefix');
 const GoogleImages = require('google-images');
 const allowCommand = require('../../../helpers/allowcommand');
 const random = require('../../../helpers/random');
@@ -12,7 +12,7 @@ function checkGoogle(msg) {
 }
 
 module.exports = (robot) => {
-  robot.hear(regex('/gis (.*)/mi'), (msg) => {
+  robot.hear(Prefix.regex('/gis (.*)/mi'), (msg) => {
     if (!allowCommand(robot, msg)) {
       return;
     }

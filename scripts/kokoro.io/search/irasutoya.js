@@ -1,9 +1,9 @@
 const irasutoya = require('@fand/irasutoya');
-const regex = require('../../../helpers/regex');
+const Prefix = require('../../../helpers/prefix');
 const allowCommand = require('../../../helpers/allowcommand');
 
 module.exports = (robot) => {
-  robot.hear(regex('/irasutoya (.*)/mi'), (msg) => {
+  robot.hear(Prefix.regex('/irasutoya (.*)/mi'), (msg) => {
     if (!allowCommand(robot, msg)) {
       return;
     }

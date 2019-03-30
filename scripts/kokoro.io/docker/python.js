@@ -1,9 +1,9 @@
-const regex = require('../../../helpers/regex');
+const Prefix = require('../../../helpers/prefix');
 const allowCommand = require('../../../helpers/allowcommand');
 const runInDocker = require('../../../helpers/runindocker');
 
 module.exports = (robot) => {
-  robot.hear(regex('/python (.*)/mi'), (msg) => {
+  robot.hear(Prefix.regex('/python (.*)/mi'), (msg) => {
     if (!allowCommand(robot, msg)) {
       return;
     }
@@ -14,7 +14,7 @@ module.exports = (robot) => {
       input = input.replace(/\/stream/, '');
       stream = true;
     }
-    const script = input.replace('/python', '');
+    const script = input.replace(`${Prefix.text}python`, '');
 
     console.log('python: ------');
     console.log(script);
