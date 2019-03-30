@@ -18,4 +18,4 @@ RUN \
 EXPOSE 8080
 
 ENTRYPOINT ["/sbin/tini", "--"]
-CMD ["./bin/hubot", "-a", "kokoro.io", "-n", "mohemohe-testbot"]
+CMD ["./bin/hubot", "-a", "kokoro.io", "-n", "mohemohe-kokorobot"]
