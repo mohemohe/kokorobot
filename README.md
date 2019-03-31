@@ -1,4 +1,4 @@
-# kokorobot
+![](https://i.imgur.com/WaLS1zt.png)
 
 ## インストール
 
