@@ -21,6 +21,6 @@ ${script}
     console.log('sh: ----------');
     console.log(shellscript);
     console.log('--------------');
-    runInDocker(msg, 'base/archlinux', shellscript, stream);
+    runInDocker(msg, 'archlinux/base', shellscript, stream);
   });
 };
