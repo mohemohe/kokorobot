@@ -105,7 +105,11 @@ DONE.`);
     }
   };
 
-  const cp = childProcess.spawn('docker', ['run', '--rm', '-i', '--network', 'none', '--log-driver', 'none', image], { stdio: 'pipe' });
+  let spawnArgs = ['run', '--rm', '-i', '--network', 'none', '--log-driver', 'none', image];
+  if (process.env.KOKOROBOT_ALLOW_DOCKER_NETWORK && process.env.KOKOROBOT_ALLOW_DOCKER_NETWORK === 'true') {
+    spawnArgs = ['run', '--rm', '-i', '--log-driver', 'none', image];
+  }
+  const cp = childProcess.spawn('docker', spawnArgs, { stdio: 'pipe' });
   timeoutHandler = setTimeout((() => {
     cp.kill();
     return msg.send('TIMEOUT!');
