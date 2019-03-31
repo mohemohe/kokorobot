@@ -1,6 +1,7 @@
 const fns = require('date-fns');
 const random = require('../../helpers/random');
 const Prefix = require('../../helpers/prefix');
+const user = require('../../helpers/user');
 
 const maxHp = 100;
 const dailyHeal = 10;
@@ -12,10 +13,10 @@ module.exports = ((robot) => {
     console.log(msg.match);
 
     const mode = msg.match[1];
-    const current = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`);
-    const dbHp = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_hp`);
-    let rebirth = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_rebirth`) || 0;
-    const auto = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_rebirth_auto`) || 0;
+    const current = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_enable`);
+    const dbHp = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_hp`);
+    let rebirth = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_rebirth`) || 0;
+    const auto = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_rebirth_auto`) || 0;
     let hp = 100;
     switch (mode) {
       case 'register':
@@ -24,45 +25,45 @@ module.exports = ((robot) => {
         }
 
         if (current === 1) {
-          msg.reply(`${msg.message.user}は既に社会に参加しています。 残りHP: ${hp}/${maxHp}`);
+          msg.reply(`${user(robot, msg).displayName}は既に社会に参加しています。 残りHP: ${hp}/${maxHp}`);
           return;
         }
 
         if (hp < 1) {
           rebirth++;
-          robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_rebirth`, rebirth);
+          robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_rebirth`, rebirth);
           hp = maxHp;
         }
-        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`, 1);
-        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_hp`, hp);
-        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_last`, new Date().getTime());
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_enable`, 1);
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_hp`, hp);
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_last`, new Date().getTime());
         robot.brain.save();
         if (hp === maxHp) {
           if (rebirth > 0) {
-            msg.reply(`${msg.message.user}は社会に参加しました。つよく生きましょう。 残りHP: ${hp}/${maxHp} 転生回数: ${rebirth}`);
+            msg.reply(`${user(robot, msg).displayName}は社会に参加しました。つよく生きましょう。 残りHP: ${hp}/${maxHp} 転生回数: ${rebirth}`);
           } else {
-            msg.reply(`${msg.message.user}は社会に参加しました。つよく生きましょう。 残りHP: ${hp}/${maxHp}`);
+            msg.reply(`${user(robot, msg).displayName}は社会に参加しました。つよく生きましょう。 残りHP: ${hp}/${maxHp}`);
           }
         } else {
-          msg.reply(`${msg.message.user}は社会に復帰しました。つよく生きましょう。 残りHP: ${hp}/${maxHp}`);
+          msg.reply(`${user(robot, msg).displayName}は社会に復帰しました。つよく生きましょう。 残りHP: ${hp}/${maxHp}`);
         }
         break;
       case 'unregister':
         if (current === 0) {
-          msg.reply(`${msg.message.user}は既に社会から離脱しています。`);
+          msg.reply(`${user(robot, msg).displayName}は既に社会から離脱しています。`);
           return;
         }
-        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`, 0);
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_enable`, 0);
         robot.brain.save();
-        msg.reply(`${msg.message.user}は社会から離脱しました。来世もがんばりましょう。`);
+        msg.reply(`${user(robot, msg).displayName}は社会から離脱しました。来世もがんばりましょう。`);
         break;
       case 'status':
-        if (robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`) !== 1) {
-          msg.reply(`${msg.message.user}は社会に参加していません。`);
+        if (robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_enable`) !== 1) {
+          msg.reply(`${user(robot, msg).displayName}は社会に参加していません。`);
         } else if (rebirth > 0) {
-          msg.reply(`${msg.message.user}は社会に参加しています。 残りHP: ${dbHp}/${maxHp} 転生回数: ${rebirth}`);
+          msg.reply(`${user(robot, msg).displayName}は社会に参加しています。 残りHP: ${dbHp}/${maxHp} 転生回数: ${rebirth}`);
         } else {
-          msg.reply(`${msg.message.user}は社会に参加しています。 残りHP: ${dbHp}/${maxHp}`);
+          msg.reply(`${user(robot, msg).displayName}は社会に参加しています。 残りHP: ${dbHp}/${maxHp}`);
         }
         break;
       default:
@@ -75,7 +76,7 @@ module.exports = ((robot) => {
                   break;
                 }
 
-                robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_rebirth_auto`, 1);
+                robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_rebirth_auto`, 1);
                 robot.brain.save();
                 msg.reply('自動転生を有効にしました。油断せずに生きましょう。');
                 break;
@@ -85,7 +86,7 @@ module.exports = ((robot) => {
                   break;
                 }
 
-                robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_rebirth_auto`, 0);
+                robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_rebirth_auto`, 0);
                 robot.brain.save();
                 msg.reply('自動転生を無効にしました。命を大事にしましょう。');
                 break;
@@ -109,7 +110,7 @@ module.exports = ((robot) => {
   });
 
   robot.hear(/疲|苦|眠|怠|突|痛|つかれ[たてす]?|ひろう|だる[いくす]?|つら[いくす]?|ねむ[いくす]?|しんど[いくす]?|くるし[いくす]?|いた[いくす]|tukare|ｔｕｋａｒｅ|tsukare|ｔｓｕｋａｒｅ|tire|ｔｉｒｅ|tiring|ｔｉｒｉｎｇ|ちれ|たいや|タイヤ|たれかつ|タレかつ|タレカツ|たれカツ/gi, (msg) => {
-    if (msg.message.text.indexOf('ない') !== -1 || robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`) !== 1) {
+    if (msg.message.text.indexOf('ない') !== -1 || robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_enable`) !== 1) {
       return;
     }
 
@@ -128,18 +129,18 @@ module.exports = ((robot) => {
     }
 
     const msgArray = [];
-    const currentHp = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_hp`) || maxHp;
+    const currentHp = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_hp`) || maxHp;
     if (currentHp < 1) {
       return;
     }
 
-    const lastDamage = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_last`);
+    const lastDamage = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_last`);
 
     let nextHp = currentHp;
     if (lastDamage) {
       const days = Math.abs(fns.differenceInDays(fns.startOfDay(new Date(lastDamage)), fns.startOfDay(new Date())));
       if (days > 0) {
-        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_last`, new Date().getTime());
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_last`, new Date().getTime());
         nextHp += dailyHeal * days;
         if (nextHp > maxHp) {
           nextHp = maxHp;
@@ -150,28 +151,28 @@ module.exports = ((robot) => {
 
     const damage = (new Array(attacks)).fill(0).map(() => Math.floor((random(1, maxDamage) + random(1, maxDamage) + random(1, maxDamage)) / 3)).reduce((a, b) => a + b);
     if (damage % 7 === 0) {
-      msgArray.push(`社会の${attackName} ${msg.message.user}はひらりと身をかわした！ 残りHP: ${nextHp}/${maxHp}`);
+      msgArray.push(`社会の${attackName} ${user(robot, msg).displayName}はひらりと身をかわした！ 残りHP: ${nextHp}/${maxHp}`);
     } else {
       nextHp -= damage;
-      msgArray.push(`社会の${attackName} ${msg.message.user}に${damage}のダメージ！ 残りHP: ${nextHp}/${maxHp}`);
+      msgArray.push(`社会の${attackName} ${user(robot, msg).displayName}に${damage}のダメージ！ 残りHP: ${nextHp}/${maxHp}`);
     }
-    robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_hp`, nextHp);
+    robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_hp`, nextHp);
 
     if (nextHp < 1) {
-      const auto = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_rebirth_auto`) || 0;
+      const auto = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_rebirth_auto`) || 0;
       if (auto === 1) {
-        let rebirth = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_rebirth`) || 0;
+        let rebirth = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_rebirth`) || 0;
         rebirth++;
-        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_rebirth`, rebirth);
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_rebirth`, rebirth);
         nextHp = maxHp;
-        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`, 1);
-        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_hp`, nextHp);
-        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_last`, new Date().getTime());
-        msgArray.push(`${msg.message.user}は社会の荒波に打ち勝てませんでした。`);
-        msgArray.push(`温かい光が${msg.message.user}の体を包み込んだ。 残りHP: ${nextHp}/${maxHp} 転生回数: ${rebirth}`);
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_enable`, 1);
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_hp`, nextHp);
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_last`, new Date().getTime());
+        msgArray.push(`${user(robot, msg).displayName}は社会の荒波に打ち勝てませんでした。`);
+        msgArray.push(`温かい光が${user(robot, msg).displayName}の体を包み込んだ。 残りHP: ${nextHp}/${maxHp} 転生回数: ${rebirth}`);
       } else {
-        msgArray.push(`${msg.message.user}は社会の荒波に打ち勝てませんでした。来世もがんばりましょう。（registerで最初からはじめる）`);
-        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`, 0);
+        msgArray.push(`${user(robot, msg).displayName}は社会の荒波に打ち勝てませんでした。来世もがんばりましょう。（registerで最初からはじめる）`);
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_enable`, 0);
       }
     }
 
@@ -180,7 +181,7 @@ module.exports = ((robot) => {
   });
 
   robot.hear(/^@(.*)\s.*(えら|偉|すご)[いくす]?.*$/m, (msg) => {
-    if (msg.message.text.indexOf('ない') !== -1 || robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`) !== 1 || robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.match[1]}_enable`) !== 1) {
+    if (msg.message.text.indexOf('ない') !== -1 || robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_enable`) !== 1 || robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.match[1]}_enable`) !== 1) {
       return;
     }
 
@@ -192,13 +193,13 @@ module.exports = ((robot) => {
     let nextHp = currentHp;
     const heal = Math.floor((random(1, maxHeal) + random(1, maxHeal) + random(1, maxHeal)) / 3);
     if (heal % 3 === 0) {
-      msg.send(`@${msg.match[1]} ${msg.message.user}のかいふくまほう！ @${msg.match[1]} はひらりと身をかわした！ 残りHP: ${nextHp}/${maxHp}`);
+      msg.send(`@${msg.match[1]} ${user(robot, msg).displayName}のかいふくまほう！ @${msg.match[1]} はひらりと身をかわした！ 残りHP: ${nextHp}/${maxHp}`);
     } else {
       nextHp += heal;
       if (nextHp > maxHp) {
         nextHp = maxHp;
       }
-      msg.send(`@${msg.match[1]} ${msg.message.user}のかいふくまほう！ @${msg.match[1]} は${heal}回復した！ 残りHP: ${nextHp}/${maxHp}`);
+      msg.send(`@${msg.match[1]} ${user(robot, msg).displayName}のかいふくまほう！ @${msg.match[1]} は${heal}回復した！ 残りHP: ${nextHp}/${maxHp}`);
     }
     robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.match[1]}_hp`, nextHp);
 
@@ -206,23 +207,23 @@ module.exports = ((robot) => {
   });
 
   robot.hear(/[死し]ん[だでじ]/, (msg) => {
-    if (msg.message.text.indexOf('ない') !== -1 || robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`) !== 1) {
+    if (msg.message.text.indexOf('ない') !== -1 || robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_enable`) !== 1) {
       return;
     }
 
     const msgArray = [];
-    const currentHp = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_hp`) || maxHp;
+    const currentHp = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_hp`) || maxHp;
     if (currentHp < 1) {
       return;
     }
 
-    const lastDamage = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_last`);
+    const lastDamage = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_last`);
 
     let nextHp = currentHp;
     if (lastDamage) {
       const days = Math.abs(fns.differenceInDays(fns.startOfDay(new Date(lastDamage)), fns.startOfDay(new Date())));
       if (days > 0) {
-        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_last`, new Date().getTime());
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_last`, new Date().getTime());
         nextHp += dailyHeal * days;
         if (nextHp > maxHp) {
           nextHp = maxHp;
@@ -233,24 +234,24 @@ module.exports = ((robot) => {
 
     const damage = 65535;
     nextHp -= damage;
-    msgArray.push(`社会のこうげき！ ${msg.message.user}に${damage}のダメージ！ 残りHP: ${nextHp}/${maxHp}`);
-    robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_hp`, nextHp);
+    msgArray.push(`社会のこうげき！ ${user(robot, msg).displayName}に${damage}のダメージ！ 残りHP: ${nextHp}/${maxHp}`);
+    robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_hp`, nextHp);
 
     if (nextHp < 1) {
-      const auto = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_rebirth_auto`) || 0;
+      const auto = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_rebirth_auto`) || 0;
       if (auto === 1) {
-        let rebirth = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_rebirth`) || 0;
+        let rebirth = robot.brain.get(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_rebirth`) || 0;
         rebirth++;
-        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_rebirth`, rebirth);
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_rebirth`, rebirth);
         nextHp = maxHp;
-        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`, 1);
-        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_hp`, nextHp);
-        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_last`, new Date().getTime());
-        msgArray.push(`${msg.message.user}は死んでしまった！`);
-        msgArray.push(`温かい光が${msg.message.user}の体を包み込んだ。 残りHP: ${nextHp}/${maxHp} 転生回数: ${rebirth}`);
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_enable`, 1);
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_hp`, nextHp);
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_last`, new Date().getTime());
+        msgArray.push(`${user(robot, msg).displayName}は死んでしまった！`);
+        msgArray.push(`温かい光が${user(robot, msg).displayName}の体を包み込んだ。 残りHP: ${nextHp}/${maxHp} 転生回数: ${rebirth}`);
       } else {
-        msgArray.push(`${msg.message.user}は死んでしまった！（registerで最初からはじめる）`);
-        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${msg.message.screen_name}_enable`, 0);
+        msgArray.push(`${user(robot, msg).displayName}は死んでしまった！（registerで最初からはじめる）`);
+        robot.brain.set(`kokoroio_socialquest_${msg.message.room}_${user(robot, msg).internalId}_enable`, 0);
       }
     }
 
