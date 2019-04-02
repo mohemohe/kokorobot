@@ -145,7 +145,7 @@ module.exports = ((robot) => {
         if (nextHp > maxHp) {
           nextHp = maxHp;
         }
-        msgArray.push(`最後に攻撃を受けてから ${days} 日経過しました。HP回復処理を行います。 ${currentHp} → ${nextHp}/${maxHp}`);
+        msgArray.push(`宿屋で休んでから ${days} 日経過しました。 ${currentHp} → ${nextHp}/${maxHp}`);
       }
     }
 
@@ -228,7 +228,7 @@ module.exports = ((robot) => {
         if (nextHp > maxHp) {
           nextHp = maxHp;
         }
-        msgArray.push(`最後に攻撃を受けてから ${days} 日経過しました。HP回復処理を行います。 ${currentHp} → ${nextHp}/${maxHp}`);
+        msgArray.push(`宿屋で休んでから ${days} 日経過しました。 ${currentHp} → ${nextHp}/${maxHp}`);
       }
     }
 
