@@ -2,8 +2,8 @@ module.exports = (robot, msg) => {
   switch (robot.adapterName) {
     case 'kokoro.io':
       return {
-        displayName: msg.message.user.display_name,
-        internalId: msg.message.user.screen_name,
+        displayName: msg.message.display_name,
+        internalId: msg.message.screen_name,
       };
     case 'slack':
       return {
