@@ -15,10 +15,12 @@ services:
         target: /var/run/docker.sock
     depends_on:
       - mongodb
+    healthcheck:
+      test: ["CMD", "wget", "-O", "-", "http://127.0.0.1:8080/"]
     restart: on-failure
   mongodb:
     container_name: hubot-mongodb
-    image: mongo:3.4
+    image: mongo:4.0
     networks:
       - default
     volumes:
