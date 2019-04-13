@@ -3,6 +3,7 @@ version: "3.2"
 services:
   hubot:
     build: .
+    # image: mohemohe/kokorobot:latest
     env_file: .env
     networks:
       - default
@@ -20,7 +21,7 @@ services:
     restart: on-failure
   mongodb:
     container_name: hubot-mongodb
-    image: mongo:4.0
+    image: mongo:3.6
     networks:
       - default
     volumes:

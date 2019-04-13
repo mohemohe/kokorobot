@@ -20,4 +20,3 @@ RUN \
     cp -rf docker/root/* /
 
 ENTRYPOINT ["/init"]
-CMD ["./bin/hubot", "-a", "kokoro.io", "-n", "mohemohe-kokorobot"]

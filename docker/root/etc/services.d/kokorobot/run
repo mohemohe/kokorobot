@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cd /kokorobot
+bin/hubot -a "$KOKOROBOT_HUBOT_ADAPTER" -n "$KOKOROBOT_HUBOT_NAME" mohemohe-kokorobot

@@ -1,13 +1,8 @@
 ![](https://i.imgur.com/WaLS1zt.png)
 
-## インストール
+## 起動まで
 
-```bash
-yarn
-```
-
-## 起動
-
-```bash
-yarn up
+```sh
+cp .env.sample .env
+docker-compose up
 ```
