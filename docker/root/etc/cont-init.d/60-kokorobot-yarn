@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cd /kokorobot
+/usr/local/bin/yarn

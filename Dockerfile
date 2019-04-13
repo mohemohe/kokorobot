@@ -1,21 +1,23 @@
 FROM node:8-alpine
 MAINTAINER mohemohe <mohemohe@ghippos.net>
 
+ENV S6_KEEP_ENV 1
 ENV PORT 8080
 ENV MONGODB_URL mongodb://hubot-mongodb:27017/hubot
+EXPOSE 8080
 
 RUN \
     set -xe; \
-    apk add --no-cache tini docker
+    wget -O - https://github.com/just-containers/s6-overlay/releases/download/v1.21.8.0/s6-overlay-amd64.tar.gz | tar xzf - -C /; \
+    apk add --no-cache docker
 
 ADD . /kokorobot
 WORKDIR /kokorobot
+VOLUME /kokorobot/node_modules
 
 RUN \
     set -xe; \
-    yarn
+    cp -rf docker/root/* /
 
-EXPOSE 8080
-
-ENTRYPOINT ["/sbin/tini", "--"]
+ENTRYPOINT ["/init"]
 CMD ["./bin/hubot", "-a", "kokoro.io", "-n", "mohemohe-kokorobot"]
