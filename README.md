@@ -6,3 +6,7 @@
 cp .env.sample .env
 docker-compose up
 ```
+
+## コマンド追加
+
+https://github.com/mohemohe/kokorobot-extend-sample が参考になるかも
