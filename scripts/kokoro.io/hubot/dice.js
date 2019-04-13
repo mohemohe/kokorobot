@@ -1,6 +1,6 @@
-const Prefix = require('../../helpers/prefix');
-const random = require('../../helpers/random');
-const allowCommand = require('../../helpers/allowcommand');
+const Prefix = require('../helpers/prefix');
+const random = require('../helpers/random');
+const allowCommand = require('../helpers/allowcommand');
 
 module.exports = (robot) => {
   robot.hear(Prefix.regex('/dice(.*)/mi'), (msg) => {

@@ -1,5 +1,5 @@
 const Haiku = require('@mohemohe/haiku.js').default;
-const Prefix = require('../../helpers/prefix');
+const Prefix = require('../helpers/prefix');
 
 module.exports = (robot) => {
   robot.hear(Prefix.regex('/ikku(.*)$/mi'), (msg) => {

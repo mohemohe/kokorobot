@@ -1,4 +1,4 @@
-const Prefix = require('../../helpers/prefix');
+const Prefix = require('../helpers/prefix');
 
 module.exports = (robot) => {
   robot.hear(Prefix.regex('/command (.*)/mi'), (msg) => {

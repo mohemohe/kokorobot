@@ -1,8 +1,8 @@
 const util = require('util');
 const Bing = require('node-bing-api');
-const Prefix = require('../../../helpers/prefix');
-const allowCommand = require('../../../helpers/allowcommand');
-const random = require('../../../helpers/random');
+const Prefix = require('../../helpers/prefix');
+const allowCommand = require('../../helpers/allowcommand');
+const random = require('../../helpers/random');
 
 function checkBing(msg) {
   if (process.env.BING_API_KEY) {

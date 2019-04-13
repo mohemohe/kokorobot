@@ -1,7 +1,7 @@
 const fns = require('date-fns');
-const random = require('../../helpers/random');
-const Prefix = require('../../helpers/prefix');
-const user = require('../../helpers/user');
+const random = require('../helpers/random');
+const Prefix = require('../helpers/prefix');
+const user = require('../helpers/user');
 
 const maxHp = 100;
 const dailyHeal = 10;

@@ -1,6 +1,6 @@
-const Prefix = require('../../../helpers/prefix');
-const allowCommand = require('../../../helpers/allowcommand');
-const runInDocker = require('../../../helpers/runindocker');
+const Prefix = require('../../helpers/prefix');
+const allowCommand = require('../../helpers/allowcommand');
+const runInDocker = require('../../helpers/runindocker');
 
 module.exports = (robot) => {
   robot.hear(Prefix.regex('/node (.*)/mi'), (msg) => {

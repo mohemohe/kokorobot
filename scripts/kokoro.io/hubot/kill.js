@@ -1,5 +1,5 @@
-const Prefix = require('../../helpers/prefix');
-const allowCommand = require('../../helpers/allowcommand');
+const Prefix = require('../helpers/prefix');
+const allowCommand = require('../helpers/allowcommand');
 
 module.exports = (robot) => {
   robot.hear(Prefix.regex('/kill$/mi'), (msg) => {

@@ -1,6 +1,6 @@
 const Mastodon = require('mastodon-api');
-const Prefix = require('../../helpers/prefix');
-const allowCommand = require('../../helpers/allowcommand');
+const Prefix = require('../helpers/prefix');
+const allowCommand = require('../helpers/allowcommand');
 
 const Mode = {
   ALL: 'all',
