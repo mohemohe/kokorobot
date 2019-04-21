@@ -10,3 +10,9 @@ docker-compose up
 ## コマンド追加
 
 https://github.com/mohemohe/kokorobot-extend-sample が参考になるかも
+
+## 独自拡張
+
+### robot
+
+- robot.util.

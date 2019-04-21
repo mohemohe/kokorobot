@@ -55,6 +55,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/hubot@^2.19.4":
+  version "2.19.4"
+  resolved "https://registry.yarnpkg.com/@types/hubot/-/hubot-2.19.4.tgz#f0cb41fd4184379ca681b80ad6b736758cae5a14"
+  integrity sha512-W3zPE9UrtayGs1Bam+4mQsZxlFD0cM6Cl6XL1nkE+ETRmaIFlhcZq+gTqMiVr1GYsUBl4INNUFK0URVoGr1PCw==
+
 "@types/kuromoji@^0.1.0":
   version "0.1.0"
   resolved "https://registry.npmjs.org/@types/kuromoji/-/kuromoji-0.1.0.tgz#c8576688644864afa0c81f4d841a7142ad5293a6"
@@ -3575,6 +3580,11 @@ typescript@^2.9.2:
 typescript@^3.0.3:
   version "3.0.3"
   resolved "https://registry.npmjs.org/typescript/-/typescript-3.0.3.tgz#4853b3e275ecdaa27f78fda46dc273a7eb7fc1c8"
+
+typescript@^3.4.4:
+  version "3.4.4"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.4.4.tgz#aac4a08abecab8091a75f10842ffa0631818f785"
+  integrity sha512-xt5RsIRCEaf6+j9AyOBgvVuAec0i92rgCaS3S+UVf5Z/vF2Hvtsw08wtUTJqp4djwznoAgjSxeCcU4r+CcDBJA==
 
 uid-safe@2.1.4:
   version "2.1.4"
