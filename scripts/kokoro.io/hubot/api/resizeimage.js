@@ -32,7 +32,7 @@ module.exports = (robot) => {
     if (!url) {
       return res.send(500);
     }
-    if (!width && !height) {
+    if (!width && !height || width - 0 > 2048 || width - 0 < 0 || height - 0 > 2048 || height - 0 < 0) {
       return res.send(500);
     }
 
