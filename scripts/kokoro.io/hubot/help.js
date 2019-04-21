@@ -17,6 +17,7 @@ ${Prefix.text}lgtm                     LGTM
 
 ${Prefix.text}mstdn                    🐘
 ${Prefix.text}社会                     つらい
+${Prefix.text}ikku                     古池や 蛙飛び込む 水の音
 
 ${Prefix.text}bash                     docker run -i --rm --network none base/archlinux
 ${Prefix.text}node                     docker run -i --rm --network none node:alpine
