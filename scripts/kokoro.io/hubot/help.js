@@ -9,8 +9,9 @@ module.exports = (robot) => {
 
     const help = `\`\`\`
 ${Prefix.text}command [enable|disable] コマンド有効・無効切り替え
-${Prefix.text}bis                      Bing画像検索 (3000req/month)
+${Prefix.text}ifl                      Google I'm Feeling Lucky
 ${Prefix.text}gis                      Google画像検索 (100req/day)
+${Prefix.text}bis                      Bing画像検索 (3000req/month)
 ${Prefix.text}irasutoya                いやすとや画像検索
 ${Prefix.text}dice                     さいころ
 ${Prefix.text}lgtm                     LGTM
