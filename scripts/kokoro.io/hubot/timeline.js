@@ -91,8 +91,10 @@ ${Object.keys(target).map((key) => `${key}: ${target[key]}`).join('\n')}`);
         room,
       }, {
         as_user: false,
-        username: msg.envelope.user.slack.real_name,
-        icon_url: msg.envelope.user.slack.profile.image_512,
+        username: msg.envelope.user.slack ? msg.envelope.user.slack.real_name : msg.envelope.message.rawMessage.username,
+        icon_url: msg.envelope.user.slack ?
+          (msg.envelope.user.slack.profile.image_512 || msg.envelope.user.slack.profile.image_128 || msg.envelope.user.slack.profile.image_64 || msg.envelope.user.slack.profile.image_48 || msg.envelope.user.slack.profile.image_32) :
+          (msg.envelope.message.rawMessage.icons.image_512 || msg.envelope.message.rawMessage.icons.image_128 || msg.envelope.message.rawMessage.icons.image_64 || msg.envelope.message.rawMessage.icons.image_48 || msg.envelope.message.rawMessage.icons.image_32),
         text: `${msg.message.rawMessage.text} (at #${roomName})`,
       });
     }));
