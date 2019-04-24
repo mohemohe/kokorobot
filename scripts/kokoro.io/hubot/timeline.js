@@ -27,7 +27,7 @@ module.exports = (robot) => {
       case 'add':
         {
           if (args.length !== 2) {
-            return msg.send(`${Prefix.text}timeline add [ ${Detect.isSlack ? 'roomId' : 'channelName'} ]`);
+            return msg.send(`${Prefix.text}timeline add #channelName`);
           }
 
           const target = Brain.get(robot, msg);
@@ -42,7 +42,7 @@ module.exports = (robot) => {
       case 'remove':
         {
           if (args.length !== 2) {
-            return msg.send(`${Prefix.text}timeline remove [ ${Detect.isSlack ? 'roomId' : 'channelName'} ]`);
+            return msg.send(`${Prefix.text}timeline remove #channelName`);
           }
 
           const target = Brain.get(robot, msg);
