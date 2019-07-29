@@ -7,7 +7,7 @@
   "dependencies": {
     "@fand/irasutoya": "mohemohe/irasutoya#develop",
     "@mohemohe/haiku.js": "^0.1.0",
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "date-fns": "^1.29.0",
     "eslint-config-airbnb-base": "^13.0.0",
     "glob": "^7.1.3",
