@@ -27,7 +27,7 @@ class Mstdn {
         this.listener = null;
       }
     }
-    this.listener = this.mstdn.stream('/api/v1/streaming/user');
+    this.listener = this.mstdn.stream('/api/v1/streaming/user', 10);
     if (this.listener) {
       console.log('mastodon userstream connected');
       this.listener.on('update', msg => this._onStreamMessage(msg));
@@ -63,9 +63,9 @@ class Mstdn {
 
   status(msg) {
     if (this.listener) {
-      msg.reply(`\`${process.env.MASTODON_API_URL}streaming/user\`に接続しています`);
+      msg.reply(`\`${process.env.MASTODON_BASE_URL}/api/v1/streaming/user\`に接続しています`);
     } else {
-      msg.reply(`\`${process.env.MASTODON_API_URL}streaming/user\`に接続していません`);
+      msg.reply(`\`${process.env.MASTODON_BASE_URL}/api/v1/streaming/user\`に接続していません`);
     }
   }
 
@@ -259,7 +259,7 @@ ${Mstdn.unescape(dbTarget)}: ${mode}
   reconnect(msg) {
     this._connect();
     if (msg) {
-      msg.reply(`\`${process.env.MASTODON_API_URL}streaming/user\`に再接続しました`);
+      msg.reply(`\`${process.env.MASTODON_BASE_URL}/api/v1/streaming/user\`に再接続しました`);
     }
   }
 
