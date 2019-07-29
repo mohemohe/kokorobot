@@ -1,4 +1,4 @@
-const Mastodon = require('mastodon-api');
+const Mastodon = require('megalodon').default;
 const Prefix = require('../helpers/prefix');
 const allowCommand = require('../helpers/allowcommand');
 
@@ -9,10 +9,7 @@ const Mode = {
 
 class Mstdn {
   constructor(apiUrl, accessToken, robot) {
-    this.mstdn = new Mastodon({
-      api_url: apiUrl,
-      access_token: accessToken,
-    });
+    this.mstdn = new Mastodon(accessToken, apiUrl);
     this.robot = robot;
 
     this.listener = null;
@@ -22,7 +19,7 @@ class Mstdn {
   _connect() {
     if (this.listener) {
       try {
-        this.listener.off('message', msg => this._onStreamMessage(msg));
+        this.listener.off('update', msg => this._onStreamMessage(msg));
         this.listener.off('error', err => this._onStreamMessage(err));
       } catch (e) {
         console.log(e);
@@ -30,36 +27,31 @@ class Mstdn {
         this.listener = null;
       }
     }
-    this.listener = this.mstdn.stream('streaming/user');
+    this.listener = this.mstdn.stream('/api/v1/streaming/user');
     if (this.listener) {
       console.log('mastodon userstream connected');
-      this.listener.on('message', msg => this._onStreamMessage(msg));
+      this.listener.on('update', msg => this._onStreamMessage(msg));
       this.listener.on('error', err => this._onStreamMessage(err));
     }
   }
 
   _onStreamMessage(msg) {
-    if (msg.event !== 'update') {
-      console.log(msg);
-      return;
-    }
-
     const rooms = this.robot.brain.get('kokoroio_mstdn') || {};
     Object.keys(rooms).forEach((room) => {
       const track = this.robot.brain.get(`kokoroio_mstdn_${room}`) || {};
-      Object.keys(track).filter(key => Mstdn.unescape(key) === msg.data.account.acct).forEach(() => {
-        const acct = Mstdn.escape(msg.data.account.acct);
+      Object.keys(track).filter(key => Mstdn.unescape(key) === msg.account.acct).forEach(() => {
+        const acct = Mstdn.escape(msg.account.acct);
         console.log('mode:', track[acct]);
-        if (track[acct] === Mode.IMAGE && (msg.data.media_attachments || []).length === 0) {
+        if (track[acct] === Mode.IMAGE && (msg.media_attachments || []).length === 0) {
           return;
         }
 
-        console.log(msg.data);
+        console.log(msg);
 
-        const tootUri = msg.data.url || msg.data.uri || '';
+        const tootUri = msg.url || msg.uri || '';
         this.robot.send({
           room,
-        }, `@${msg.data.account.acct} の${msg.data.reblog ? 'ブースト' : 'トゥート'}: ${tootUri.replace(/\/activity$/, '')}`);
+        }, `@${msg.account.acct} の${msg.reblog ? 'ブースト' : 'トゥート'}: ${tootUri.replace(/\/activity$/, '')}`);
       });
     });
   }
@@ -109,26 +101,48 @@ class Mstdn {
       }
     }
 
-    this.mstdn.post('follows', {
-      uri: target,
-    }).then(resp => resp.data).then((data) => {
-      if (!data || !data.id) {
-        msg.reply(`${target} さんの追加に失敗しました（鍵垢かも？）`);
-      } else {
-        const acct = this.robot.brain.get(`kokoroio_mstdn_${msg.message.room}`) || {};
-        acct[Mstdn.escape(data.acct)] = mode;
-        this.robot.brain.set(`kokoroio_mstdn_${msg.message.room}`, acct);
+    console.log("follow:", target)
 
-        const track = this.robot.brain.get('kokoroio_mstdn') || {};
-        track[msg.message.room] = mode;
-        this.robot.brain.set('kokoroio_mstdn', track);
-        this.robot.brain.save();
+    let acct;
 
-        msg.reply(`${target} さんを追加しました`);
+    this.mstdn.get(`/api/v2/search?q=@${target}&resolve=true&limit=1`).then(resp => {
+      console.log(`/api/v2/search?q=@${target}&resolve=true&limit=1`, resp)
+      return resp.data;
+    }).then(data => {
+      if (data.accounts.length === 0) {
+        msg.reply(`${target} さんはFediverseに存在しません`);
+        throw new Error("INTERNAL");
       }
+      return data.accounts[0];
+    }).then(account => {
+      acct = account.acct;
+      return this.mstdn.post(`/api/v1/accounts/${account.id}/follow`);
+    }).then(resp => {
+      return resp.data;
+    }).then((data) => {
+      console.log(`/api/v1/accounts/:id/follow`, data);
+      if (data.following) {
+        msg.reply(`${target} さんを追加しました`);
+      } else if (data.blocked_by) {
+        msg.reply(`${target} さんの追加に失敗しました（ブロックされています）`);
+      } else if (data.requested) {
+        msg.reply(`${target} さんにフォローリスエストを送りました（鍵垢です）`);
+      }
+
+      const room = this.robot.brain.get(`kokoroio_mstdn_${msg.message.room}`) || {};
+      room[Mstdn.escape(acct)] = mode;
+      this.robot.brain.set(`kokoroio_mstdn_${msg.message.room}`, room);
+
+      const track = this.robot.brain.get('kokoroio_mstdn') || {};
+      track[msg.message.room] = mode;
+      this.robot.brain.set('kokoroio_mstdn', track);
+      this.robot.brain.save();
+
     }).catch((err) => {
-      msg.reply(`${target} さんの追加に失敗しました（鍵垢かも？）`);
-      console.log(err);
+      if (err.message !== "INTERNAL") {
+        msg.reply(`${target} さんの追加に失敗しました（ブロックされてるかも？）`);
+        console.log(err);
+      }
     });
   }
 
@@ -260,8 +274,8 @@ ${Mstdn.unescape(dbTarget)}: ${mode}
 
 module.exports = (robot) => {
   let mstdn;
-  if (process.env.MASTODON_API_URL && process.env.MASTODON_ACCESS_TOKEN) {
-    mstdn = new Mstdn(process.env.MASTODON_API_URL, process.env.MASTODON_ACCESS_TOKEN, robot);
+  if (process.env.MASTODON_BASE_URL && process.env.MASTODON_ACCESS_TOKEN) {
+    mstdn = new Mstdn(process.env.MASTODON_BASE_URL, process.env.MASTODON_ACCESS_TOKEN, robot);
   }
 
   robot.hear(Prefix.regex('/mstdn\\s*(.*)$/mi'), (msg) => {
@@ -270,7 +284,7 @@ module.exports = (robot) => {
     }
 
     if (!mstdn) {
-      msg.reply('`マストドン API URL`または`マストドン アクセストークン`が設定されていません\n環境変数`MASTODON_API_URL`と`MASTODON_ACCESS_TOKEN`に設定してください');
+      msg.reply('`マストドン API URL`または`マストドン アクセストークン`が設定されていません\n環境変数`MASTODON_BASE_URL`と`MASTODON_ACCESS_TOKEN`に設定してください');
     }
 
     const mode = msg.match[1].split(' ')[0];
