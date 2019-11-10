@@ -1,10 +1,8 @@
 const axios = require('axios');
-const Prefix = require('../../helpers/prefix');
-const allowCommand = require('../../helpers/allowcommand');
 
 module.exports = (robot) => {
-  robot.hear(Prefix.regex('/lgtm/'), async (msg) => {
-    if (!allowCommand(robot, msg)) {
+  robot.hear(robot.kokoro.util.prefix.regex('/lgtm/'), async (msg) => {
+    if (!robot.kokoro.util.allowCommand(robot, msg)) {
       return;
     }
 

@@ -1,8 +1,7 @@
 const Haiku = require('@mohemohe/haiku.js').default;
-const Prefix = require('../helpers/prefix');
 
 module.exports = (robot) => {
-  robot.hear(Prefix.regex('/ikku(.*)$/mi'), (msg) => {
+  robot.hear(robot.kokoro.util.prefix.regex('/ikku(.*)$/mi'), (msg) => {
     const command = msg.match[1].trim();
     const status = robot.brain.get(`kokoroio_ikku_enable_${msg.envelope.room}`);
     switch (command) {

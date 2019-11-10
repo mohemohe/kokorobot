@@ -1,7 +1,4 @@
-const Prefix = require('../../helpers/prefix');
 const GoogleImages = require('google-images');
-const allowCommand = require('../../helpers/allowcommand');
-const random = require('../../helpers/random');
 
 function checkGoogle(msg) {
   if (process.env.GOOGLE_CSE_ID && process.env.GOOGLE_API_KEY) {
@@ -12,8 +9,8 @@ function checkGoogle(msg) {
 }
 
 module.exports = (robot) => {
-  robot.hear(Prefix.regex('/gis (.*)/mi'), (msg) => {
-    if (!allowCommand(robot, msg)) {
+  robot.hear(robot.kokoro.util.prefix.regex('/gis (.*)/mi'), (msg) => {
+    if (!robot.kokoro.util.allowCommand(robot, msg)) {
       return;
     }
 
@@ -22,7 +19,7 @@ module.exports = (robot) => {
       const searchText = msg.match[1];
       googleImage.search(searchText).then((images) => {
         console.log(images);
-        const target = random(0, images.length);
+        const target = robot.kokoro.util.random(0, images.length);
         console.log('search target: ', target, images[target]);
         msg.send(images[target].url);
       }).catch((error) => {

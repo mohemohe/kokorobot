@@ -1,8 +1,5 @@
 const util = require('util');
 const Bing = require('node-bing-api');
-const Prefix = require('../../helpers/prefix');
-const allowCommand = require('../../helpers/allowcommand');
-const random = require('../../helpers/random');
 
 function checkBing(msg) {
   if (process.env.BING_API_KEY) {
@@ -16,8 +13,8 @@ function checkBing(msg) {
 }
 
 module.exports = (robot) => {
-  robot.hear(Prefix.regex('/bis (.*)/mi'), (msg) => {
-    if (!allowCommand(robot, msg)) {
+  robot.hear(robot.kokoro.util.prefix.regex('/bis (.*)/mi'), (msg) => {
+    if (!robot.kokoro.util.allowCommand(robot, msg)) {
       return;
     }
 
@@ -37,7 +34,7 @@ module.exports = (robot) => {
           return;
         }
         if (body && body.value && (body.value.length > 0)) {
-          const target = random(0, body.value.length);
+          const target = robot.kokoro.util.random(0, body.value.length);
           console.log('search target: ', target, body.value[target]);
           msg.send(body.value[target].contentUrl);
         } else {

@@ -1,7 +1,5 @@
-const Prefix = require('../helpers/prefix');
-
 module.exports = (robot) => {
-  robot.hear(Prefix.regex('/command (.*)/mi'), (msg) => {
+  robot.hear(robot.kokoro.util.prefix.regex('/command (.*)/mi'), (msg) => {
     let status = msg.match[1];
     switch (status) {
       case 'enable':

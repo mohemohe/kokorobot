@@ -1,10 +1,8 @@
 const irasutoya = require('@fand/irasutoya');
-const Prefix = require('../../helpers/prefix');
-const allowCommand = require('../../helpers/allowcommand');
 
 module.exports = (robot) => {
-  robot.hear(Prefix.regex('/irasutoya (.*)/mi'), (msg) => {
-    if (!allowCommand(robot, msg)) {
+  robot.hear(robot.kokoro.util.prefix.regex('/irasutoya (.*)/mi'), (msg) => {
+    if (!robot.kokoro.util.allowCommand(robot, msg)) {
       return;
     }
 

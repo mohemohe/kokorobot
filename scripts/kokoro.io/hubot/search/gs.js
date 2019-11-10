@@ -1,9 +1,6 @@
-const Prefix = require('../../helpers/prefix');
-const allowCommand = require('../../helpers/allowcommand');
-
 module.exports = (robot) => {
-  robot.hear(Prefix.regex('/ifl (.*)/mi'), (msg) => {
-    if (!allowCommand(robot, msg)) {
+  robot.hear(robot.kokoro.util.prefix.regex('/ifl (.*)/mi'), (msg) => {
+    if (!robot.kokoro.util.allowCommand(robot, msg)) {
       return;
     }
 
@@ -11,7 +8,7 @@ module.exports = (robot) => {
   });
 
   robot.hear(/^(.*)\s検索$/mi, (msg) => {
-    if (!allowCommand(robot, msg)) {
+    if (!robot.kokoro.util.allowCommand(robot, msg)) {
       return;
     }
 

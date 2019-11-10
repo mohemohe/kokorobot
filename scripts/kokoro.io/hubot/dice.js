@@ -1,11 +1,7 @@
-const Prefix = require('../helpers/prefix');
-const random = require('../helpers/random');
-const allowCommand = require('../helpers/allowcommand');
-
 module.exports = (robot) => {
-  robot.hear(Prefix.regex('/dice(.*)/mi'), (msg) => {
+  robot.hear(robot.kokoro.util.prefix.regex('/dice(.*)/mi'), (msg) => {
     let _times;
-    if (!allowCommand(robot, msg)) {
+    if (!robot.kokoro.util.allowCommand(robot, msg)) {
       return;
     }
 
@@ -41,7 +37,7 @@ module.exports = (robot) => {
 
     let result = 0;
     for (let i = 0; i < times; i++) {
-      const rand = random(1, face);
+      const rand = robot.kokoro.util.random(1, face);
       result += rand;
     }
 

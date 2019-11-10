@@ -1,10 +1,6 @@
-const Prefix = require('../../helpers/prefix');
-const allowCommand = require('../../helpers/allowcommand');
-const runInDocker = require('../../helpers/runindocker');
-
 module.exports = (robot) => {
-  robot.hear(Prefix.regex('/php[ \r\n]+(.*)/msi'), (msg) => {
-    if (!allowCommand(robot, msg)) {
+  robot.hear(robot.kokoro.util.prefix.regex('/php[ \r\n]+(.*)/msi'), (msg) => {
+    if (!robot.kokoro.util.allowCommand(robot, msg)) {
       return;
     }
 
@@ -14,11 +10,11 @@ module.exports = (robot) => {
       input = input.replace(/\/stream/, '');
       stream = true;
     }
-    const script = input.replace(`${Prefix.text}php`, '');
+    const script = input.replace(`${robot.kokoro.util.prefix.text}php`, '');
 
     console.log('php: ---------');
     console.log(script);
     console.log('--------------');
-    runInDocker(msg, 'php:alpine', script, stream);
+    robot.kokoro.util.runInDocker(msg, 'php:alpine', script, stream);
   });
 };

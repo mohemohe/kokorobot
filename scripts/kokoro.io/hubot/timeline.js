@@ -1,6 +1,3 @@
-const Prefix = require('../helpers/prefix');
-const allowCommand = require('../helpers/allowcommand');
-
 class Brain {
   static key(msg) {
     return `timeline_${msg.envelope.room}`;
@@ -17,17 +14,17 @@ class Brain {
 }
 
 module.exports = (robot) => {
-  robot.hear(Prefix.regex('/timeline\\s*(.+)?$/mi'), (msg) => {
+  robot.hear(robot.kokoro.util.prefix.regex('/timeline\\s*(.+)?$/mi'), (msg) => {
     const args = (msg.match ? msg.match[1] || '' : '').replace(/\s+/g, ' ').split(' ');
     if (args.length === 0) {
-      return msg.send(`${Prefix.text}timeline [ add | remove | status ]`);
+      return msg.send(`${robot.kokoro.util.prefix.text}timeline [ add | remove | status ]`);
     }
 
     switch (args[0]) {
       case 'add':
         {
           if (args.length !== 2) {
-            return msg.send(`${Prefix.text}timeline add #channelName`);
+            return msg.send(`${robot.kokoro.util.prefix.text}timeline add #channelName`);
           }
 
           const target = Brain.get(robot, msg);
@@ -42,7 +39,7 @@ module.exports = (robot) => {
       case 'remove':
         {
           if (args.length !== 2) {
-            return msg.send(`${Prefix.text}timeline remove #channelName`);
+            return msg.send(`${robot.kokoro.util.prefix.text}timeline remove #channelName`);
           }
 
           const target = Brain.get(robot, msg);
@@ -58,7 +55,7 @@ module.exports = (robot) => {
       case 'status':
         {
           if (args.length !== 1) {
-            return msg.send(`${Prefix.text}timeline status`);
+            return msg.send(`${robot.kokoro.util.prefix.text}timeline status`);
           }
 
           const target = Brain.get(robot, msg);
@@ -67,7 +64,7 @@ ${Object.keys(target).map((key) => `${key}: ${target[key]}`).join('\n')}`);
         }
       default:
         {
-          return msg.send(`${Prefix.text}timeline [ add | remove | status ]`);
+          return msg.send(`${robot.kokoro.util.prefix.text}timeline [ add | remove | status ]`);
         }
     }
   });
@@ -77,7 +74,7 @@ ${Object.keys(target).map((key) => `${key}: ${target[key]}`).join('\n')}`);
       return;
     }
 
-    if (msg.envelope.message.text.startsWith(`${Prefix.text}timeline`)) {
+    if (msg.envelope.message.text.startsWith(`${robot.kokoro.util.prefix.text}timeline`)) {
       return;
     }
 

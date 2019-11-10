@@ -1,9 +1,6 @@
-const Prefix = require('../helpers/prefix');
-const allowCommand = require('../helpers/allowcommand');
-
 module.exports = (robot) => {
-  robot.hear(Prefix.regex('/kill$/mi'), (msg) => {
-    if (!allowCommand(robot, msg)) {
+  robot.hear(robot.kokoro.util.prefix.regex('/kill$/mi'), (msg) => {
+    if (!robot.kokoro.util.allowCommand(robot, msg)) {
       return;
     }
 

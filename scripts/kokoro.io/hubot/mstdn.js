@@ -1,6 +1,4 @@
 const Mastodon = require('megalodon').default;
-const Prefix = require('../helpers/prefix');
-const allowCommand = require('../helpers/allowcommand');
 
 const Mode = {
   ALL: 'all',
@@ -72,7 +70,7 @@ class Mstdn {
   add(msg) {
     const args = msg.match[1].split(' ');
     if (args.length !== 2 && args.length !== 3) {
-      msg.reply(`${Prefix.text}mstdn add [name@instance|toot_url] [all|image]`);
+      msg.reply(`${robot.kokoro.util.prefix.text}mstdn add [name@instance|toot_url] [all|image]`);
       return;
     }
 
@@ -149,7 +147,7 @@ class Mstdn {
   remove(msg) {
     const args = msg.match[1].split(' ');
     if (args.length !== 2) {
-      msg.reply(`${Prefix.text}mstdn remove [name@instance|toot_url]`);
+      msg.reply(`${robot.kokoro.util.prefix.text}mstdn remove [name@instance|toot_url]`);
       return;
     }
 
@@ -221,7 +219,7 @@ ${page.join('\n')}
   find(msg) {
     const args = msg.match[1].split(' ');
     if (args.length !== 2) {
-      msg.reply(`${Prefix.text}mstdn find [name@instance|toot_url]`);
+      msg.reply(`${robot.kokoro.util.prefix.text}mstdn find [name@instance|toot_url]`);
       return;
     }
 
@@ -278,8 +276,8 @@ module.exports = (robot) => {
     mstdn = new Mstdn(process.env.MASTODON_BASE_URL, process.env.MASTODON_ACCESS_TOKEN, robot);
   }
 
-  robot.hear(Prefix.regex('/mstdn\\s*(.*)$/mi'), (msg) => {
-    if (!allowCommand(robot, msg)) {
+  robot.hear(robot.kokoro.util.prefix.regex('/mstdn\\s*(.*)$/mi'), (msg) => {
+    if (!robot.kokoro.util.allowCommand(robot, msg)) {
       return;
     }
 
@@ -308,7 +306,7 @@ module.exports = (robot) => {
         mstdn.reconnect(msg);
         break;
       default:
-        msg.reply(`${Prefix.text}mstdn [status|auth|add|remove|list|find|reconnect]`);
+        msg.reply(`${robot.kokoro.util.prefix.text}mstdn [status|auth|add|remove|list|find|reconnect]`);
         break;
     }
   });

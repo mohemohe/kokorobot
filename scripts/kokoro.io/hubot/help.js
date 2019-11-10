@@ -1,6 +1,6 @@
 /// <reference path="../../../typings/kokorobot">
 
-module.exports = (/** @type KokoroBot.Robot<any> */ robot) => {
+module.exports = (/** @type import('hubot').Robot<any> */ robot) => {
   robot.hear(robot.kokoro.util.prefix.regex('/help$/mi'), (msg) => {
     if (!robot.kokoro.util.allowCommand(robot, msg)) {
       return;
