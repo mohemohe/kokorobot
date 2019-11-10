@@ -3,7 +3,7 @@ const allowCommand = require('../../helpers/allowcommand');
 const runInDocker = require('../../helpers/runindocker');
 
 module.exports = (robot) => {
-  robot.hear(Prefix.regex('/bash (.*)/mi'), (msg) => {
+  robot.hear(Prefix.regex('/bash[ \r\n]+(.*)/msi'), (msg) => {
     if (!allowCommand(robot, msg)) {
       return;
     }

@@ -10,6 +10,11 @@ module.exports = (robot, msg) => {
         displayName: msg.message.user.slack.name,
         internalId: msg.message.user.slack.id,
       };
+    case 'discord':
+      return {
+        displayName: msg.message.user.name,
+        internalId: msg.message.user.id,
+      };
     default:
       return {
         displayName: msg.user.name,

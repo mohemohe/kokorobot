@@ -7,7 +7,7 @@
   "dependencies": {
     "@fand/irasutoya": "mohemohe/irasutoya#develop",
     "@mohemohe/haiku.js": "^0.1.0",
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "date-fns": "^1.29.0",
     "eslint-config-airbnb-base": "^13.0.0",
     "glob": "^7.1.3",
@@ -19,13 +19,14 @@
     "hubot-scripts": "^2.17.2",
     "hubot-slack": "^4.6.0",
     "kokoro-io": "^0.9.1",
-    "mastodon-api": "^1.3.0",
+    "megalodon": "^0.8.2",
     "mersenne-twister": "^1.1.0",
     "node-bing-api": "^4.0.0",
     "sharp": "^0.21.1"
   },
   "scripts": {
-    "up": "yarn && docker-compose build && docker-compose up"
+    "up": "yarn && docker-compose build && docker-compose up",
+    "start": "env $(cat .env | grep -v -P '^#') bash -c 'bin/hubot -a $KOKOROBOT_HUBOT_ADAPTER -n $KOKOROBOT_HUBOT_NAME'"
   },
   "devDependencies": {
     "@types/hubot": "^2.19.4",

@@ -8,6 +8,23 @@ module.exports = (msg, image, script, stream) => {
   const splitNum = 20;
   let lock = false;
 
+  const genMsg = (isPartial, so, se) => {
+    const res = [];
+    if (so !== '') {
+      res.push(`STDOUT${isPartial ? ' (partial)' : ''}
+\`\`\`
+${so}
+\`\`\``);
+    }
+    if (se !== '') {
+      res.push(`STDERR${isPartial ? ' (partial)' : ''}
+\`\`\`
+${se}
+\`\`\``);
+    }
+    return res.join('\n');
+  };
+
   const startStreamTimer = () => {
     streamHandler = setInterval(() => {
       const _stdout = stdout.trim();
@@ -17,15 +34,7 @@ module.exports = (msg, image, script, stream) => {
       if (!_stdout.match(/^\n*$/) || !_stderr.match(/^\n*$/)) {
         console.log('stdout:', _stdout);
         console.log('stderr:', _stderr);
-        return msg.send(`STDOUT (partial)
-\`\`\`
-${_stdout}
-\`\`\`
-
-STDERR (partial)
-\`\`\`
-${_stderr}
-\`\`\``);
+        return msg.send(genMsg(true, _stdout, _stderr));
       }
     }, 3 * 1000);
   };
@@ -46,15 +55,7 @@ ${_stderr}
           _stdout.splice(0, splitNum);
           _stderr.splice(0, splitNum);
           if ((__stdout.length > 0) || (__stderr.length > 0)) {
-            msg.send(`STDOUT (partial)
-\`\`\`
-${__stdout}
-\`\`\`
-
-STDERR (partial)
-\`\`\`
-${__stderr}
-\`\`\``);
+            msg.send(genMsg(true, __stdout, __stderr));
           } else if (finalize) {
             clearInterval(postHandler);
             msg.send('DONE.');
@@ -79,16 +80,7 @@ ${__stderr}
         if (lastStderr.length !== 0) {
           _stderr.push(lastStderr);
         }
-        return msg.send(`STDOUT
-\`\`\`
-${_stdout.join('\n')}
-\`\`\`
-
-STDERR
-\`\`\`
-${_stderr.join('\n')}
-\`\`\`
-DONE.`);
+        return msg.send(genMsg(false, _stdout.join('\n'), _stderr.join('\n')));
       }
     };
 
