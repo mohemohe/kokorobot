@@ -1,8 +1,7 @@
-//@ts-check
-const hubot = require('hubot');
-const glob = require('glob');
+import {Robot} from "../../typing/kokorobot";
+import * as glob from "glob";
 
-module.exports = (/** @type hubot.Robot */robot) => {
+module.exports = (robot: Robot<any>) => {
   robot.kokoro = {
     util: require('../util'),
   };

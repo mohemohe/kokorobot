@@ -26,9 +26,11 @@
   },
   "scripts": {
     "up": "yarn && docker-compose build && docker-compose up",
-    "start": "env $(cat .env | grep -v -P '^#') bash -c 'bin/hubot -a $KOKOROBOT_HUBOT_ADAPTER -n $KOKOROBOT_HUBOT_NAME'"
+    "build": "tsc",
+    "start": "env $(cat .env | grep -v -P '^#') bash -c 'bin/hubot --require ./dist -a $KOKOROBOT_HUBOT_ADAPTER -n $KOKOROBOT_HUBOT_NAME'"
   },
   "devDependencies": {
+    "@types/glob": "^7.1.1",
     "@types/hubot": "^2.19.4",
     "@types/sharp": "^0.23.0",
     "eslint": "^6.6.0",

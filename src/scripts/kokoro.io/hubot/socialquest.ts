@@ -1,11 +1,12 @@
-const fns = require('date-fns');
+import fns from "date-fns";
+import {Robot} from "../../../../typing/kokorobot";
 
 const maxHp = 100;
 const dailyHeal = 10;
 const maxDamage = 17;
 const maxHeal = 8;
 
-module.exports = ((robot) => {
+module.exports = ((robot: Robot<any>) => {
   robot.hear(robot.kokoro.util.prefix.regex('/社会\\s*(.*?)$/mi'), (msg) => {
     console.log(msg.match);
 

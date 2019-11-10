@@ -1,19 +1,21 @@
+import {Robot, Response} from "../../../../typing/kokorobot";
+
 class Brain {
-  static key(msg) {
+  static key(msg: Response<any>) {
     return `timeline_${msg.envelope.room}`;
   }
 
-  static get(robot, msg) {
+  static get(robot: Robot<any>, msg: Response<any>): any {
     return robot.brain.get(Brain.key(msg)) || {};
   }
 
-  static set(robot, msg, obj) {
+  static set(robot: Robot<any>, msg: Response<any>, obj: any) {
     robot.brain.set(Brain.key(msg), obj || {});
     robot.brain.save();
   }
 }
 
-module.exports = (robot) => {
+module.exports = (robot: Robot<any>) => {
   robot.hear(robot.kokoro.util.prefix.regex('/timeline\\s*(.+)?$/mi'), (msg) => {
     const args = (msg.match ? msg.match[1] || '' : '').replace(/\s+/g, ' ').split(' ');
     if (args.length === 0) {

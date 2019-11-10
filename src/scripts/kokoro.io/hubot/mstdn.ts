@@ -1,4 +1,5 @@
-const Mastodon = require('megalodon').default;
+import Mastodon, {StreamListener, Status} from "megalodon";
+import {Robot, Response} from "../../../../typing/kokorobot";
 
 const Mode = {
   ALL: 'all',
@@ -6,7 +7,11 @@ const Mode = {
 };
 
 class Mstdn {
-  constructor(apiUrl, accessToken, robot) {
+  private mstdn: Mastodon;
+  private listener: StreamListener | null;
+  private robot: Robot<any>;
+
+  constructor(apiUrl: string, accessToken: string, robot: Robot<any>) {
     this.mstdn = new Mastodon(accessToken, apiUrl);
     this.robot = robot;
 
@@ -33,7 +38,7 @@ class Mstdn {
     }
   }
 
-  _onStreamMessage(msg) {
+  _onStreamMessage(msg: Status) {
     const rooms = this.robot.brain.get('kokoroio_mstdn') || {};
     Object.keys(rooms).forEach((room) => {
       const track = this.robot.brain.get(`kokoroio_mstdn_${room}`) || {};
@@ -54,12 +59,12 @@ class Mstdn {
     });
   }
 
-  _onStreamError(err) {
+  _onStreamError(err: Error) {
     console.log(err);
     this.reconnect();
   }
 
-  status(msg) {
+  status(msg: Response<any>) {
     if (this.listener) {
       msg.reply(`\`${process.env.MASTODON_BASE_URL}/api/v1/streaming/user\`に接続しています`);
     } else {
@@ -67,7 +72,7 @@ class Mstdn {
     }
   }
 
-  add(msg) {
+  add(msg: Response<any>) {
     const args = msg.match[1].split(' ');
     if (args.length !== 2 && args.length !== 3) {
       msg.reply(`${robot.kokoro.util.prefix.text}mstdn add [name@instance|toot_url] [all|image]`);
@@ -144,7 +149,7 @@ class Mstdn {
     });
   }
 
-  remove(msg) {
+  remove(msg: Response<any>) {
     const args = msg.match[1].split(' ');
     if (args.length !== 2) {
       msg.reply(`${robot.kokoro.util.prefix.text}mstdn remove [name@instance|toot_url]`);
@@ -171,7 +176,7 @@ class Mstdn {
     msg.reply(`${target} さんを削除しました`);
   }
 
-  list(msg) {
+  list(msg: Response<any>) {
     const acct = this.robot.brain.get(`kokoroio_mstdn_${msg.message.room}`) || {};
     const screenNames = Object.keys(acct);
     if (screenNames.length === 0) {
@@ -216,10 +221,10 @@ ${page.join('\n')}
     }
   }
 
-  find(msg) {
+  find(msg: Response<any>) {
     const args = msg.match[1].split(' ');
     if (args.length !== 2) {
-      msg.reply(`${robot.kokoro.util.prefix.text}mstdn find [name@instance|toot_url]`);
+      msg.reply(`${this.robot.kokoro.util.prefix.text}mstdn find [name@instance|toot_url]`);
       return;
     }
 
@@ -254,23 +259,23 @@ ${Mstdn.unescape(dbTarget)}: ${mode}
 \`\`\``);
   }
 
-  reconnect(msg) {
+  reconnect(msg?: Response<any>) {
     this._connect();
     if (msg) {
       msg.reply(`\`${process.env.MASTODON_BASE_URL}/api/v1/streaming/user\`に再接続しました`);
     }
   }
 
-  static escape(text) {
+  static escape(text: string) {
     return text.replace(/\./g, '__DOT__');
   }
 
-  static unescape(text) {
+  static unescape(text: string) {
     return text.replace(/__DOT__/g, '.');
   }
 }
 
-module.exports = (robot) => {
+module.exports = (robot: Robot<any>) => {
   let mstdn;
   if (process.env.MASTODON_BASE_URL && process.env.MASTODON_ACCESS_TOKEN) {
     mstdn = new Mstdn(process.env.MASTODON_BASE_URL, process.env.MASTODON_ACCESS_TOKEN, robot);
