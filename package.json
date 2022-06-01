@@ -22,7 +22,7 @@
     "megalodon": "^0.8.2",
     "mersenne-twister": "^1.1.0",
     "node-bing-api": "^4.0.0",
-    "sharp": "^0.23.2"
+    "sharp": "^0.30.5"
   },
   "scripts": {
     "up": "yarn && docker-compose build && docker-compose up",
